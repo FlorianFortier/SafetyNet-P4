@@ -1,6 +1,9 @@
 package com.safetyNet.alerts.api;
 
+import com.safetyNet.alerts.api.entity.Firestation;
+import com.safetyNet.alerts.api.repository.FirestationRepository;
 import com.safetyNet.alerts.api.repository.MedicalRecordRepository;
+import com.safetyNet.alerts.api.repository.PersonRepository;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,6 +14,14 @@ public class SafetyNetsConfig {
     @Bean
     public MedicalRecordRepository medicalRecordRepository() {
         return new MedicalRecordRepository();
+    }
+    @Bean
+    public PersonRepository personRepository() {
+        return new PersonRepository();
+    }
+    @Bean
+    public FirestationRepository firestationRepository() {
+        return new FirestationRepository();
     }
 
 }

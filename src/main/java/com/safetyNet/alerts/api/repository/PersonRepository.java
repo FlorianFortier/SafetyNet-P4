@@ -6,6 +6,7 @@ import com.safetyNet.alerts.api.entity.Person;
 import java.util.Optional;
 
 public class PersonRepository {
+
     public Optional<Person> findById(Long id) {
         return Optional.empty();
     }

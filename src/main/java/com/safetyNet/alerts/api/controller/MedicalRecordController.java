@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MedicalRecordController {
-
-
-
-
     private MedicalRecordService medicalRecordsService;
     /**
      * Read - Get all medicalRecords
@@ -23,7 +19,4 @@ public class MedicalRecordController {
     public Iterable<MedicalRecord> getMedicalRecords() {
         return medicalRecordsService.getMedicalRecords();
     }
-
-
-
 }

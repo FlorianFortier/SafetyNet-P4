@@ -12,7 +12,12 @@ import java.util.Optional;
 @Service
 public class FirestationService {
 
-    private FirestationRepository firestationRepository;
+    @Autowired
+    private final FirestationRepository firestationRepository;
+
+    public FirestationService(FirestationRepository firestationRepository) {
+        this.firestationRepository = firestationRepository;
+    }
 
     public Optional<Firestation> getFirestation(final Long id) {
         return firestationRepository.findById(id);

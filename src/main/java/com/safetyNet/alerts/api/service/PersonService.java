@@ -3,6 +3,7 @@ package com.safetyNet.alerts.api.service;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.PersonRepository;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -10,7 +11,11 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
+
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     public Optional<Person> getPerson(final Long id) {
         return personRepository.findById(id);
