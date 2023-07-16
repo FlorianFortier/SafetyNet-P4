@@ -11,17 +11,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SafetyNetsConfig {
-    @Bean
-    public MedicalRecordRepository medicalRecordRepository() {
-        return new MedicalRecordRepository();
-    }
-    @Bean
-    public PersonRepository personRepository() {
-        return new PersonRepository();
-    }
-    @Bean
-    public FirestationRepository firestationRepository() {
-        return new FirestationRepository();
-    }
 
 }

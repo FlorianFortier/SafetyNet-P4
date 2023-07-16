@@ -1,9 +1,11 @@
 package com.safetyNet.alerts.api.repository;
 
 import com.safetyNet.alerts.api.entity.Firestation;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public class FirestationRepository {
     public Optional<Firestation> findById(Long id) {
         return Optional.empty();

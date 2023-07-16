@@ -1,13 +1,16 @@
 package com.safetyNet.alerts.api.repository;
 
-import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.Person;
+import org.json.simple.parser.ParseException;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public class PersonRepository {
 
-    public Optional<Person> findById(Long id) {
+
+    public Optional<Person> findById(Long id) throws ParseException {
         return Optional.empty();
     }
 
