@@ -15,9 +15,7 @@ public class PersonController {
     /**
      * Read - Get all medicalRecords
      *
-     * @return - An Iterable object of Employee full filled
      */
-
     @Autowired
     public PersonController(PersonService personService) {
         this.personService = personService;

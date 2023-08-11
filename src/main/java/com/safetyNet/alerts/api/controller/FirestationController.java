@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FirestationController {
 
+    @Autowired
     private final FirestationService firestationService;
 
     public FirestationController(FirestationService firestationService) {

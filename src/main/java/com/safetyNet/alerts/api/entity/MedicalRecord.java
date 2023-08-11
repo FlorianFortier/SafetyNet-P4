@@ -11,9 +11,6 @@ public class MedicalRecord {
         String[] medications;
         String[] allergies;
 
-        public MedicalRecord() {
-        }
-
         public MedicalRecord(String firstName, String lastName, String birthdate, String[] medications, String[] allergies) {
             this.firstName = firstName;
             this.lastName = lastName;

@@ -2,9 +2,7 @@ package com.safetyNet.alerts.api.service;
 
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.PersonRepository;
-import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import lombok.Data;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
