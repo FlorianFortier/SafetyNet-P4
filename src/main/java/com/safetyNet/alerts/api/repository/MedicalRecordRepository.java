@@ -1,16 +1,14 @@
 package com.safetyNet.alerts.api.repository;
 
-import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.MedicalRecord;
 import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +27,22 @@ public class MedicalRecordRepository extends ReadDataFromJson {
 
     /**
      * Read - Get one medicalRecord
+     *
      * @param id - The id of the medicalRecord to retrieve
      * @return - An Optional medicalRecord if found, otherwise empty
      */
     public Optional<MedicalRecord> findById(Long id) throws ParseException {
-        JSONArray medicalRecorsArray = (JSONArray) medicalRecordJSON.get(id);
-
-        return Optional.empty();
+        JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
+        JSONObject recordObj = (JSONObject) medicalRecordArray.get(Math.toIntExact(id));
+        MedicalRecord medicalRecord = new MedicalRecord(
+                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
+                (String) recordObj .get("firstName"),
+                (String) recordObj .get("lastName"),
+                (String) recordObj .get("birthdate"),
+                (String[]) ((JSONArray) recordObj .get("medications")).toArray(new String[0]),
+                (String[]) ((JSONArray) recordObj .get("allergies")).toArray(new String[0])
+        );
+        return Optional.of(medicalRecord);
     }
 
     /**

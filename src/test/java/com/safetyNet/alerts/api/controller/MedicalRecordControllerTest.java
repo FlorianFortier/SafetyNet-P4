@@ -22,7 +22,7 @@ public class MedicalRecordControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testGetMedicalRecord() throws Exception {
+    public void testGetMedicalRecords() throws Exception {
         mockMvc.perform(get("/MedicalRecord"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName", is("John")))
@@ -33,5 +33,16 @@ public class MedicalRecordControllerTest {
                 .andExpect(jsonPath("$[0].allergies[0]", is("nillacilan")));
     }
 
+    @Test
+    public  void testGetASingleMedicalRecord() throws Exception {
+        mockMvc.perform(get("/MedicalRecord?id=0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("firstName", is("John")))
+                .andExpect(jsonPath("lastName", is("Boyd")))
+                .andExpect(jsonPath("birthdate", is("03/06/1984")))
+                .andExpect(jsonPath("medications[0]", is("aznol:350mg")))
+                .andExpect(jsonPath("medications[1]", is("hydrapermazol:100mg")))
+                .andExpect(jsonPath("allergies[0]", is("nillacilan")));
+    }
 }
 
