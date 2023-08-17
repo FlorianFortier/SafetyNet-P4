@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Bean;
 public class SafetyNetAlertsApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(SafetyNetAlertsApplication.class, args);
+		System.out.println("-------------------------------------------");
+		System.out.println("WELCOME TO SAFETY NET ALERT API VERSION 1.0.0");
+		System.out.println("-------------------------------------------");
+
 	}
-
-
 }

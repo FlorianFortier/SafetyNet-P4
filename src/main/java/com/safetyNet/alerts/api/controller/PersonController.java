@@ -11,22 +11,15 @@ public class PersonController {
 
 
     @Autowired
-    private final PersonService personService;
+    private PersonService personService;
+
+
     /**
-     * Read - Get all medicalRecords
-     *
+     * Read - Get all persons
+     * @return
      */
-    @Autowired
-    public PersonController(PersonService personService) {
-        this.personService = personService;
-    }
-
-
     @GetMapping("/Person")
     public Iterable<Person> getPersons() {
-
         return personService.getPersons();
     }
-
-
 }

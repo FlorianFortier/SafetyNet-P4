@@ -1,8 +1,7 @@
 package com.safetyNet.alerts.api.controller;
 
-import com.safetyNet.alerts.api.entity.Firestation;
+
 import com.safetyNet.alerts.api.entity.MedicalRecord;
-import com.safetyNet.alerts.api.service.FirestationService;
 import com.safetyNet.alerts.api.service.MedicalRecordService;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
