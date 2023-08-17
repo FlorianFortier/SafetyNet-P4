@@ -23,10 +23,10 @@ public class PersonControllerTest {
 
     @Test
     public void testGetPerson() throws Exception {
-        mockMvc.perform(get("/person"))
+        mockMvc.perform(get("/Person"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].firstname", is("John")))
-                .andExpect(jsonPath("$[0].lastname", is("Boyd")))
+                .andExpect(jsonPath("$[0].firstName", is("John")))
+                .andExpect(jsonPath("$[0].lastName", is("Boyd")))
                 .andExpect(jsonPath("$[0].address", is("1509 Culver St")))
                 .andExpect(jsonPath("$[0].city", is("Culver")))
                 .andExpect(jsonPath("$[0].zip", is("97451")))

@@ -23,7 +23,7 @@ public class MedicalRecordControllerTest {
 
     @Test
     public void testGetAllMedicalRecords() throws Exception {
-        mockMvc.perform(get("/MedicalRecord"))
+        mockMvc.perform(get("/MedicalRecords"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName", is("John")))
                 .andExpect(jsonPath("$[0].lastName", is("Boyd")))
