@@ -27,7 +27,15 @@ public class FirestationRepository extends ReadDataFromJson {
      *
      */
     public Optional<Firestation> findById(Long id) {
-        return Optional.empty();
+
+        JSONArray firestationArray = (JSONArray) FirestationRecordJSON.get("firestations");
+        JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));
+        Firestation firestation = new Firestation(
+                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
+                (String) recordObj.get("address"),
+                (String) recordObj.get("station")
+        );
+        return Optional.of(firestation);
     }
 
     /**

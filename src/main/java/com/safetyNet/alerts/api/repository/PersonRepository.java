@@ -1,6 +1,7 @@
 package com.safetyNet.alerts.api.repository;
 
 
+import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.json.simple.JSONArray;
@@ -26,7 +27,19 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     public Optional<Person> findById(Long id) throws ParseException {
-        return Optional.empty();
+        JSONArray personArray = (JSONArray) personJSON.get("persons");
+        JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));
+        Person person = new Person(
+                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
+                (String) recordObj.get("firstName"),
+                (String) recordObj.get("lastName"),
+                (String) recordObj.get("address"),
+                (String) recordObj.get("city"),
+                (String) recordObj.get("zip"),
+                (String) recordObj.get("phone"),
+                (String) recordObj.get("email")
+        );
+        return Optional.of(person);
     }
 
     /**

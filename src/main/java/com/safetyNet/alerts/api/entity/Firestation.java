@@ -10,9 +10,6 @@ public class Firestation {
         private String address = "";
         private String station = "";
 
-        public Firestation() {
-        }
-
     /**
      *
      * @param address Address of the firestation

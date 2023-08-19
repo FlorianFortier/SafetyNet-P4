@@ -23,7 +23,7 @@ public class PersonControllerTest {
 
     @Test
     public void testGetPerson() throws Exception {
-        mockMvc.perform(get("/Person"))
+        mockMvc.perform(get("/Persons"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName", is("John")))
                 .andExpect(jsonPath("$[0].lastName", is("Boyd")))
@@ -35,6 +35,18 @@ public class PersonControllerTest {
 
 
     }
-
+    @Test
+    public  void testGetASinglePerson() throws Exception {
+        mockMvc.perform(get("/Person?id=0"))
+                .andExpect(status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("firstName", is("John")))
+                .andExpect(jsonPath("lastName", is("Boyd")))
+                .andExpect(jsonPath("address", is("1509 Culver St")))
+                .andExpect(jsonPath("city", is("Culver")))
+                .andExpect(jsonPath("zip", is("97451")))
+                .andExpect(jsonPath("phone", is("841-874-6512")))
+                .andExpect(jsonPath("email", is("jaboyd@email.com")));
+    }
 }
 

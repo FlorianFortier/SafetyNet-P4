@@ -23,12 +23,18 @@ public class FirestationControllerTest {
 
     @Test
     public void testGetFirestation() throws Exception {
-        mockMvc.perform(get("/firestation"))
+        mockMvc.perform(get("/Firestations"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].address", is("1509 Culver St")))
                 .andExpect(jsonPath("$[0].station", is("3")));
 
     }
-
+    @Test
+    public  void testGetASingleFirestation() throws Exception {
+        mockMvc.perform(get("/Firestation?id=0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("address", is("1509 Culver St")))
+                .andExpect(jsonPath("station", is("3")));
+    }
 }
 
