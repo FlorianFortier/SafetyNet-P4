@@ -1,13 +1,12 @@
 package com.safetyNet.alerts.api.service;
 
-import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.MedicalRecord;
-import com.safetyNet.alerts.api.repository.FirestationRepository;
 import com.safetyNet.alerts.api.repository.MedicalRecordRepository;
 import lombok.Data;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
 
@@ -32,13 +31,29 @@ public class MedicalRecordService {
         return medicalRecordRepository.findAll();
     }
 
-    public void deleteMedicalRecord(final Long id) {
+    public void deleteMedicalRecord(final String lastName, String firstName) throws ParseException {
 
-        medicalRecordRepository.deleteById(id);
+        medicalRecordRepository.deleteById(lastName, firstName);
     }
 
     public MedicalRecord saveMedicalRecord(MedicalRecord medicalRecord) {
-        MedicalRecord savedMedicalRecord = medicalRecordRepository.save(medicalRecord);
-        return savedMedicalRecord;
+        return medicalRecordRepository.save(medicalRecord);
+    }
+
+    public Optional<MedicalRecord> postMedicalRecord(MedicalRecord medicalRecord) {
+        return Optional.ofNullable(medicalRecordRepository.save(medicalRecord));
+    }
+
+    public MedicalRecord putMedicalRecord(MedicalRecord medicalRecord, @PathVariable long id) throws ParseException {
+         Optional<MedicalRecord> getterResponse = medicalRecordRepository.findById(id);
+            MedicalRecord recordObj = getterResponse.get();
+            recordObj.setFirstName(medicalRecord.getFirstName());
+            recordObj.setLastName(medicalRecord.getLastName());
+            recordObj.setBirthdate(medicalRecord.getBirthdate());
+            recordObj.setMedications(medicalRecord.getMedications());
+            recordObj.setAllergies(medicalRecord.getAllergies());
+            medicalRecordRepository.save(recordObj);
+
+            return recordObj;
     }
 }
