@@ -20,7 +20,7 @@ public class MedicalRecordRepository extends ReadDataFromJson {
     Logger logger = LoggerFactory.getLogger(MedicalRecordRepository.class);
 
     private final JSONObject medicalRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
-
+    JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
     /**
      * Constructor
      */
@@ -35,7 +35,7 @@ public class MedicalRecordRepository extends ReadDataFromJson {
      * @return - An Optional medicalRecord if found, otherwise empty
      */
     public Optional<MedicalRecord> findById(Long id) throws ParseException {
-        JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
+
         JSONObject recordObj = (JSONObject) medicalRecordArray.get(Math.toIntExact(id));
         MedicalRecord medicalRecord = new MedicalRecord(
                 // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
@@ -76,8 +76,13 @@ public class MedicalRecordRepository extends ReadDataFromJson {
         return medicalRecordsList;
     }
 
+    /**
+     *
+     * @param lastName lastName is a filter used as identifier
+     * @param firstName firtName is a filter used as identifier
+     */
     public void deleteById(String lastName, String firstName) {
-        JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
+
         JSONObject recordObj = (JSONObject) medicalRecordArray.stream()
                 .filter(medicalRecord -> ((JSONObject) medicalRecord).get("lastName").equals(lastName) &&
                         ((JSONObject) medicalRecord).get("firstName").equals(firstName)).findFirst().get();
@@ -86,7 +91,11 @@ public class MedicalRecordRepository extends ReadDataFromJson {
 
     }
 
-
+    /**
+     *
+     * @param medicalRecord Body Request
+     * @return Saved Medical Record
+     */
     public MedicalRecord save(MedicalRecord medicalRecord) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("firstName", medicalRecord.getFirstName());
@@ -98,16 +107,24 @@ public class MedicalRecordRepository extends ReadDataFromJson {
         return medicalRecord;
     }
 
-    public MedicalRecord update(Long id, MedicalRecord medicalRecord) throws ParseException {
-        JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
+    /**
+     *
+     * @param id index of array
+     * @param medicalRecord Body request
+     * @return updated Medical Record
+     */
+    public MedicalRecord update(Long id, MedicalRecord medicalRecord)  {
         JSONObject recordObj = (JSONObject) medicalRecordArray.get(Math.toIntExact(id));
-        recordObj.put("firstName", medicalRecord.getFirstName());
-        recordObj.put("lastName", medicalRecord.getLastName());
-        recordObj.put("birthdate", medicalRecord.getBirthdate());
-        recordObj.put("medications", medicalRecord.getMedications());
-        recordObj.put("allergies", medicalRecord.getAllergies());
+        MedicalRecord newMedicalRecord = new MedicalRecord(
+                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
+                medicalRecord.getFirstName(),
+                medicalRecord.getLastName(),
+                medicalRecord.getBirthdate(),
+                medicalRecord.getMedications(),
+                medicalRecord.getAllergies()
+        );
         logger.info("MedicalRecord updated successfully");
-
-        return medicalRecord;
+        save(medicalRecord);
+        return newMedicalRecord;
     }
 }

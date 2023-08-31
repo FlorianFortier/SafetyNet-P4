@@ -1,8 +1,6 @@
 package com.safetyNet.alerts.api.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class MedicalRecord {

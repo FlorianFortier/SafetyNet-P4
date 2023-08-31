@@ -1,14 +1,10 @@
 package com.safetyNet.alerts.api;
 
-import com.safetyNet.alerts.api.service.PersonService;
-import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+
 
 @SpringBootApplication
 public class SafetyNetAlertsApplication {
@@ -28,7 +24,7 @@ public class SafetyNetAlertsApplication {
 
 		// Set up a simple configuration that logs on the console.
 		logger.info("Entering application.");
-
+		logger.info("Application started.");
 	}
 
 }
