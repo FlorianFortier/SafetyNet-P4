@@ -33,7 +33,6 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param id Array index
      * @return a Single Firestation
      */
@@ -62,9 +61,9 @@ public class FirestationRepository extends ReadDataFromJson {
         for (Object o : firestationRecordArray) {
             JSONObject recordObj = (JSONObject) o;
             Firestation firestation = new Firestation(
-                // Extract and convert properties from recordObj to corresponding Firestation fields.
-                (String) recordObj.get("address"),
-                (String) recordObj.get("station")
+                    // Extract and convert properties from recordObj to corresponding Firestation fields.
+                    (String) recordObj.get("address"),
+                    (String) recordObj.get("station")
             );
             firestationRecordList.add(firestation);
             logger.info("Firestation retrieved successfully");
@@ -72,6 +71,7 @@ public class FirestationRepository extends ReadDataFromJson {
 
         return firestationRecordList;
     }
+
     public JSONArray personByStation(String stationNumber) {
         JSONArray firestations = (JSONArray) firestationRecordJSON.get("firestations");
         JSONArray personRelatedToStationRecordList = new JSONArray();
@@ -133,7 +133,6 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param firstName
      * @param lastName
      * @param medicalRecords
@@ -150,7 +149,6 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param birthdate
      * @return
      */
@@ -172,8 +170,8 @@ public class FirestationRepository extends ReadDataFromJson {
             return 0; // Default age in case of an error
         }
     }
+
     /**
-     *
      * @param address address is a filter used as identifier
      * @param station station is a filter used as identifier
      */
@@ -187,7 +185,6 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param firestation Body Request
      * @return saved Firestation
      */
@@ -201,12 +198,11 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     *
-     * @param id Array Index
+     * @param id          Array Index
      * @param firestation Body Request
      * @return updated Firestation
      */
-    public Firestation update(Long id, Firestation firestation)  {
+    public Firestation update(Long id, Firestation firestation) {
         JSONArray firestationArray = (JSONArray) firestationRecordJSON.get("firestations");
         JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));
         Firestation newFirestation = new Firestation(

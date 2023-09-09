@@ -8,9 +8,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
+
 import java.io.FileReader;
 import java.io.IOException;
-
 
 
 /**
@@ -24,8 +24,8 @@ public class ReadDataFromJson implements IJsonReader {
     private Firestation FireStation;
 
     private MedicalRecord MedicalRecord;
+
     /**
-     *
      * @param fileName the name of the file to read
      * @return a JSONObject
      */

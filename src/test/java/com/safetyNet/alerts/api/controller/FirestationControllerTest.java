@@ -30,13 +30,15 @@ public class FirestationControllerTest {
                 .andExpect(jsonPath("$[0].station", is("3")));
 
     }
+
     @Test
-    public  void testGetASingleFirestation() throws Exception {
+    public void testGetASingleFirestation() throws Exception {
         mockMvc.perform(get("/Firestation?id=0"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("address", is("1509 Culver St")))
                 .andExpect(jsonPath("station", is("3")));
     }
+
     @Test
     public void testPostASinglePerson() throws Exception {
         mockMvc.perform(post("/Firestation")
@@ -46,6 +48,7 @@ public class FirestationControllerTest {
                 .andExpect(jsonPath("address", is("Test")))
                 .andExpect(jsonPath("station", is("3")));
     }
+
     @Test
     public void testPutASinglePerson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/Firestation/0")
@@ -56,6 +59,7 @@ public class FirestationControllerTest {
                 .andExpect(jsonPath("station", is("3")));
 
     }
+
     @Test
     public void testDeleteASinglePerson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/Firestation?address=1509 Culver St&station=3"))

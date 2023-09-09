@@ -16,6 +16,7 @@ public class PersonService {
 
     /**
      * Constructor
+     *
      * @param personRepository repository of Person
      */
     @Autowired
@@ -25,6 +26,7 @@ public class PersonService {
 
     /**
      * Read
+     *
      * @param id index of array
      * @return A single Person
      */
@@ -33,7 +35,8 @@ public class PersonService {
     }
 
     /**
-     *  Read
+     * Read
+     *
      * @return All Person
      */
     public Iterable<Person> getPersons() {
@@ -41,7 +44,6 @@ public class PersonService {
     }
 
     /**
-     *
      * @param person Request Body
      * @return newly created Person
      */
@@ -50,8 +52,7 @@ public class PersonService {
     }
 
     /**
-     *
-     * @param id index of array
+     * @param id     index of array
      * @param person Body Request
      * @return updated Person
      */
@@ -72,7 +73,6 @@ public class PersonService {
     }
 
     /**
-     *
      * @param lastName  lastName is a filter used as identifier
      * @param firstName firstName is a filter used as identifier
      */

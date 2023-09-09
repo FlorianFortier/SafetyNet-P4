@@ -19,6 +19,7 @@ public class PersonRepository extends ReadDataFromJson {
     private final JSONObject personJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
     Logger logger = LoggerFactory.getLogger(PersonRepository.class);
     JSONArray personArray = (JSONArray) personJSON.get("persons");
+
     /**
      * Constructor
      *
@@ -28,7 +29,6 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param id index of array
      * @return An Optional object of a single Person
      */
@@ -50,6 +50,7 @@ public class PersonRepository extends ReadDataFromJson {
 
     /**
      * Retrieve all Persons from the JSON file.
+     *
      * @return - An Iterable object of Persons
      */
     public Iterable<Person> findAll() {
@@ -76,8 +77,7 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     *
-     * @param lastName lastName is a filter used as identifier
+     * @param lastName  lastName is a filter used as identifier
      * @param firstName firstName is a filter used as identifier
      */
     public void deleteById(String lastName, String firstName) {
@@ -89,7 +89,6 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param person Body Request
      * @return newly Saved Person
      */
@@ -108,12 +107,11 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     *
-     * @param id Array Index
+     * @param id     Array Index
      * @param person Body request
      * @return updated object of Person
      */
-    public Person update(Long id, Person person)  {
+    public Person update(Long id, Person person) {
         JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));
         Person newPerson = new Person(
                 // Extract and convert properties from recordObj to corresponding MedicalRecord fields.

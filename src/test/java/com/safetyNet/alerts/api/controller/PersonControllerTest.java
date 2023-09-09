@@ -36,8 +36,9 @@ public class PersonControllerTest {
 
 
     }
+
     @Test
-    public  void testGetASinglePerson() throws Exception {
+    public void testGetASinglePerson() throws Exception {
         mockMvc.perform(get("/Person?id=0"))
                 .andExpect(status().isOk())
                 .andExpect(status().isOk())
@@ -49,6 +50,7 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("phone", is("841-874-6512")))
                 .andExpect(jsonPath("email", is("jaboyd@email.com")));
     }
+
     @Test
     public void testPostASinglePerson() throws Exception {
         mockMvc.perform(post("/Person")
@@ -63,6 +65,7 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("phone", is("841-874-6512")))
                 .andExpect(jsonPath("email", is("jaboyd@email.com")));
     }
+
     @Test
     public void testPutASinglePerson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/Person/0")
@@ -78,6 +81,7 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("email", is("jaboyd@email.com")));
 
     }
+
     @Test
     public void testDeleteASinglePerson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/Person?firstName=John&lastName=Boyd"))

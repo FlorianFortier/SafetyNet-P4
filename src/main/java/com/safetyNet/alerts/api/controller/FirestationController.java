@@ -33,13 +33,14 @@ public class FirestationController {
 
         return firestationService.getFirestations();
     }
+
     @GetMapping("/firestation")
     public Iterable<Person> getFirestations(@RequestParam String stationNumber) {
 
         return firestationService.personByStation(stationNumber);
     }
+
     /**
-     *
      * @param id Array Index
      * @return An Object of a Single Firestation
      */
@@ -53,14 +54,12 @@ public class FirestationController {
     }
 
     /**
-     *
      * @param firestation Body request
      * @return newly created Firestation
      */
     @PostMapping("/Firestation")
     @ResponseBody
     public ResponseEntity<Firestation> postFirestation(@RequestBody Firestation firestation) {
-
 
 
         firestationOptional = firestationService.postFirestation(firestation);
@@ -71,9 +70,8 @@ public class FirestationController {
     }
 
     /**
-     *
      * @param firestation Body Request
-     * @param id Array index
+     * @param id          Array index
      * @return Updated Firestation
      * @throws ParseException In case of JSON parsing errors
      */
@@ -89,13 +87,12 @@ public class FirestationController {
     }
 
     /**
-     *
      * @param address address is a filter used as identifier
      * @param station station is a filter used as identifier
      * @return Http Code
      */
     @DeleteMapping("/Firestation")
-        public ResponseEntity<Firestation> deleteFirestation(@RequestParam String address, String station ) {
+    public ResponseEntity<Firestation> deleteFirestation(@RequestParam String address, String station) {
 
 
         firestationService.deleteFirestation(address, station);

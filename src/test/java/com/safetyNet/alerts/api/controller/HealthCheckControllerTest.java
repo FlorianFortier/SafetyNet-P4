@@ -17,6 +17,7 @@ public class HealthCheckControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @Test
     public void shouldReturnHello() throws Exception {
         mockMvc.perform(get("/hello"))

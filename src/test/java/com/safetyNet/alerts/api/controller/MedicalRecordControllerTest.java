@@ -36,7 +36,7 @@ public class MedicalRecordControllerTest {
     }
 
     @Test
-    public  void testGetASingleMedicalRecord() throws Exception {
+    public void testGetASingleMedicalRecord() throws Exception {
         mockMvc.perform(get("/MedicalRecord?id=0"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
@@ -50,8 +50,8 @@ public class MedicalRecordControllerTest {
     @Test
     public void testPostASingleMedicalRecord() throws Exception {
         mockMvc.perform(post("/MedicalRecord")
-                .contentType("application/json")
-                .content("{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
                 .andExpect(jsonPath("lastName", is("Boyd")))
@@ -65,8 +65,8 @@ public class MedicalRecordControllerTest {
     @Test
     public void testPutASingleMedicalRecord() throws Exception {
         mockMvc.perform(put("/MedicalRecord")
-                .contentType("application/json")
-                .content("{\"firstName\":\"John\",\"lastName\":\"Test\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Test\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
                 .andExpect(jsonPath("lastName", is("Test")))

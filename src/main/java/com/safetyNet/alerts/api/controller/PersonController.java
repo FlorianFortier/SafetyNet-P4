@@ -22,12 +22,14 @@ public class PersonController {
 
     /**
      * Read - Get all persons
+     *
      * @return List of all persons
      */
     @GetMapping("/Persons")
     public Iterable<Person> getPersons() {
         return personService.getPersons();
     }
+
     @GetMapping("/Person")
     public ResponseEntity<Person> getPerson(@RequestParam Long id) throws ParseException {
         Optional<Person> PersonOptional;
@@ -39,7 +41,6 @@ public class PersonController {
     }
 
     /**
-     *
      * @param person Body request
      * @return The newly created Person
      */
@@ -58,9 +59,8 @@ public class PersonController {
     }
 
     /**
-     *
      * @param person Request Body
-     * @param id index of array
+     * @param id     index of array
      * @return Updated Person
      * @throws ParseException throws exeption in case of parsing error with JSON
      */
@@ -76,15 +76,13 @@ public class PersonController {
     }
 
     /**
-     *
-     * @param lastName lastName is a filter used as identifier
+     * @param lastName  lastName is a filter used as identifier
      * @param firstName firtName is a filter used as identifier
      * @return Http code
      */
     @DeleteMapping("/Person")
     @ResponseBody
     public ResponseEntity<Person> deletePersonRecord(@RequestParam String lastName, String firstName) {
-
 
 
         personService.deletePerson(lastName, firstName);
