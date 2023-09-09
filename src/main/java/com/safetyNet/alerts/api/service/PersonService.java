@@ -47,6 +47,15 @@ public class PersonService {
     }
 
     /**
+     *
+      * @param firestation
+     * @return
+     */
+    public JSONArray phoneAlertByStation(String firestation) {
+
+        return personRepository.phoneAlertByStation(firestation);
+    }
+    /**
      * @param person Request Body
      * @return newly created Person
      */

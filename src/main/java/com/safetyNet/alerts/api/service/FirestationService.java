@@ -42,11 +42,15 @@ public class FirestationService {
         return firestationRepository.findAll();
     }
 
+    /**
+     *
+     * @param stationNumber
+     * @return
+     */
     public JSONArray personByStation(String stationNumber) {
 
         return firestationRepository.personByStation(stationNumber);
     }
-
     /**
      * @param address Adress is a filter used as identifier
      * @param station station is a filter used as identifier
@@ -79,11 +83,10 @@ public class FirestationService {
      */
     public Firestation putFirestation(Firestation firestation, @PathVariable long id) {
         Optional<Firestation> getterResponse = firestationRepository.findById(id);
+        firestationRepository.update(id, firestation);
         Firestation recordObj = getterResponse.get();
         recordObj.setAddress(firestation.getAddress());
         recordObj.setStation(firestation.getStation());
-
-        firestationRepository.save(recordObj);
 
         return recordObj;
     }

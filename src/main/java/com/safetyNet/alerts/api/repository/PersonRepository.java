@@ -145,6 +145,28 @@ public class PersonRepository extends ReadDataFromJson {
         return PersonList;
     }
 
+    public JSONArray phoneAlertByStation(String firestationNumber) {
+        JSONArray persons = (JSONArray) personJSON.get("persons");
+        JSONArray firestations = (JSONArray) personJSON.get("firestations");
+        JSONArray phonesNumbersList = new JSONArray();
+        for (Object firestationObj : firestations) {
+            JSONObject firestation = (JSONObject) firestationObj;
+            if (firestation.get("station").equals(firestationNumber)) {
+                String firestationAddress = (String) firestation.get("address");
+                for (Object personObj : persons) {
+                    JSONObject personJson = (JSONObject) personObj;
+                    String personAddress = (String) personJson.get("address");
+                    if (personAddress.equals(firestationAddress)) {
+                        String personPhone = (String) personJson.get("phone");
+                        phonesNumbersList.add(personPhone);
+                    }
+                }
+            }
+        }
+        return phonesNumbersList;
+    }
+
+
     /**
      * Delete a Person by their last name and first name.
      *

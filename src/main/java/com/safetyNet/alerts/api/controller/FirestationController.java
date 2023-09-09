@@ -35,12 +35,16 @@ public class FirestationController {
         return firestationService.getFirestations();
     }
 
+    /**
+     *
+     * @param stationNumber
+     * @return
+     */
     @GetMapping("/firestation")
     public JSONArray getFirestations(@RequestParam String stationNumber) {
 
         return firestationService.personByStation(stationNumber);
     }
-
     /**
      * @param id Array Index
      * @return An Object of a Single Firestation

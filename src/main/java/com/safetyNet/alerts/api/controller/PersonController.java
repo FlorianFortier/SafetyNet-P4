@@ -57,6 +57,16 @@ public class PersonController {
     }
 
     /**
+     * @param firestation
+     * @return
+     */
+    @GetMapping("/phoneAlert")
+    public JSONArray phoneAlertByStation(@RequestParam String firestation) {
+
+        return personService.phoneAlertByStation(firestation);
+    }
+
+    /**
      * @param person Body request
      * @return The newly created Person
      */
