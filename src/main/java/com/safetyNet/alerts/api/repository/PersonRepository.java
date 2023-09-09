@@ -17,6 +17,9 @@ import java.util.HashSet;
 
 import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
 
+/**
+ * Repository class for managing Person data.
+ */
 @Repository
 public class PersonRepository extends ReadDataFromJson {
 
@@ -25,7 +28,7 @@ public class PersonRepository extends ReadDataFromJson {
     JSONArray personArray = (JSONArray) personJSON.get("persons");
 
     /**
-     * Constructor
+     * Constructor for PersonRepository.
      *
      * @throws ParseException - If the JSON file is not found
      */
@@ -33,13 +36,14 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param id index of array
-     * @return An Optional object of a single Person
+     * Find a Person by their ID.
+     *
+     * @param id The index of the Person in the JSON array.
+     * @return An Optional object containing the found Person, or empty if not found.
      */
     public Optional<Person> findById(Long id) {
         JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));
         Person person = new Person(
-                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
                 (String) recordObj.get("firstName"),
                 (String) recordObj.get("lastName"),
                 (String) recordObj.get("address"),
@@ -53,8 +57,10 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param address
-     * @return
+     * Find children by address and include their relatives.
+     *
+     * @param address The address to search for.
+     * @return A JSONArray containing children and their relatives.
      */
     public JSONArray childByAddress(String address) {
         JSONArray persons = (JSONArray) personJSON.get("persons");
@@ -87,7 +93,7 @@ public class PersonRepository extends ReadDataFromJson {
                                 age
                         );
                         childByAddressWithRelatives.add(person); // Add person to Set to eliminate duplication
-                    } else {
+                    } else if (!childByAddressWithRelatives.isEmpty()) {
                         Person person = new Person(
                                 personFirstName,
                                 personLastName,
@@ -100,7 +106,6 @@ public class PersonRepository extends ReadDataFromJson {
                         );
                         relativesSet.add(person);
                     }
-
                 }
             }
         }
@@ -111,7 +116,6 @@ public class PersonRepository extends ReadDataFromJson {
 
             // Adds object "relativesObject" to "childByAddressWithRelatives"
             childByAddressWithRelatives.add(relativesObject);
-
         }
         logger.info("Childs with relatives retrieved successfully");
         return childByAddressWithRelatives;
@@ -120,17 +124,13 @@ public class PersonRepository extends ReadDataFromJson {
     /**
      * Retrieve all Persons from the JSON file.
      *
-     * @return - An Iterable object of Persons
+     * @return An Iterable object of Persons.
      */
     public Iterable<Person> findAll() {
-
         List<Person> PersonList = new ArrayList<>();
-
-        //  Assuming Person class has a constructor that takes relevant properties as arguments.
         for (Object o : personArray) {
             JSONObject recordObj = (JSONObject) o;
             Person person = new Person(
-                    // Extract and convert properties from recordObj to corresponding Person fields.
                     (String) recordObj.get("firstName"),
                     (String) recordObj.get("lastName"),
                     (String) recordObj.get("address"),
@@ -146,8 +146,10 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param lastName  lastName is a filter used as identifier
-     * @param firstName firstName is a filter used as identifier
+     * Delete a Person by their last name and first name.
+     *
+     * @param lastName  The last name of the Person.
+     * @param firstName The first name of the Person.
      */
     public void deleteById(String lastName, String firstName) {
         JSONObject recordObj = (JSONObject) personArray.stream()
@@ -158,8 +160,10 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param person Body Request
-     * @return newly Saved Person
+     * Save a new Person.
+     *
+     * @param person The Person to be saved.
+     * @return The saved Person.
      */
     public Person save(Person person) {
         JSONObject jsonObject = new JSONObject();
@@ -176,14 +180,15 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param id     Array Index
-     * @param person Body request
-     * @return updated object of Person
+     * Update an existing Person.
+     *
+     * @param id     The index of the Person in the JSON array.
+     * @param person The updated Person data.
+     * @return The updated Person object.
      */
     public Person update(Long id, Person person) {
         JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));
         Person newPerson = new Person(
-                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
                 person.getFirstName(),
                 person.getLastName(),
                 person.getAddress(),
@@ -191,7 +196,6 @@ public class PersonRepository extends ReadDataFromJson {
                 person.getZip(),
                 person.getPhone(),
                 person.getEmail()
-
         );
         logger.info("Person updated successfully");
         save(person);
