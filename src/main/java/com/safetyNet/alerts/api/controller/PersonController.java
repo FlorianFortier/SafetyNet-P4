@@ -1,7 +1,5 @@
 package com.safetyNet.alerts.api.controller;
 
-import com.safetyNet.alerts.api.entity.Firestation;
-import com.safetyNet.alerts.api.entity.MedicalRecord;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.service.PersonService;
 import org.json.simple.JSONArray;
@@ -16,13 +14,11 @@ import java.util.Optional;
 @RestController
 public class PersonController {
 
-
     @Autowired
     private PersonService personService;
 
-
     /**
-     * Read - Get all persons
+     * Retrieve the list of all persons.
      *
      * @return List of all persons
      */
@@ -32,24 +28,25 @@ public class PersonController {
     }
 
     /**
-     * @param id
-     * @return
-     * @throws ParseException
+     * Retrieve a person by their identifier.
+     *
+     * @param id Person's identifier
+     * @return ResponseEntity with the person or a HttpStatus.NOT_FOUND code
+     * @throws ParseException in case of parsing error
      */
     @GetMapping("/Person")
     public ResponseEntity<Person> getPerson(@RequestParam Long id) throws ParseException {
-        Optional<Person> PersonOptional;
-
-        PersonOptional = personService.getPerson(id);
-
-        return PersonOptional.map(person -> new ResponseEntity<>(person, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
+        Optional<Person> personOptional = personService.getPerson(id);
+        return personOptional.map(person -> new ResponseEntity<>(person, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
-     * @param address
-     * @return
-     * @throws ParseException
+     * Retrieve a list of children at a given address.
+     *
+     * @param address Address for which we want to retrieve the list of children
+     * @return JSONArray containing children's information
+     * @throws ParseException in case of parsing error
      */
     @GetMapping("/childAlert")
     public JSONArray childByAddress(@RequestParam String address) throws ParseException {
@@ -57,48 +54,61 @@ public class PersonController {
     }
 
     /**
-     * @param firestation
-     * @return
+     * Retrieve a list of phone numbers for a given fire station.
+     *
+     * @param firestation Fire station number for which we want to retrieve phone numbers
+     * @return JSONArray containing phone numbers
      */
     @GetMapping("/phoneAlert")
     public JSONArray phoneAlertByStation(@RequestParam String firestation) {
-
         return personService.phoneAlertByStation(firestation);
     }
 
     /**
+     * Retrieve a person's information by their first name and last name.
      *
-     * @param address
-     * @return
+     * @param firstName First name of the person
+     * @param lastName  Last name of the person
+     * @return JSONArray containing the person's information
+     */
+    @GetMapping("/personInfo")
+    public JSONArray personInfo(@RequestParam String firstName, String lastName) {
+        return personService.personInfo(firstName, lastName);
+    }
+
+    /**
+     * Retrieve a list of persons affected by a fire at a given address.
+     *
+     * @param address Address of the fire
+     * @return JSONArray containing information of persons affected by the fire
      */
     @GetMapping("/fire")
     public JSONArray fire(@RequestParam String address) {
-
         return personService.fire(address);
     }
+
     /**
-     * @param person Body request
-     * @return The newly created Person
+     * Create a new person.
+     *
+     * @param person Request Body containing the information of the person to create
+     * @return ResponseEntity with the new person or a HttpStatus.NOT_FOUND code
      */
     @PostMapping("/Person")
     @ResponseBody
     public ResponseEntity<Person> postMedicalRecord(@RequestBody Person person) {
-        Optional<Person> personRecordOptional;
-
-
-        personRecordOptional = personService.postPersonRecord(person);
-
+        Optional<Person> personRecordOptional = personService.postPersonRecord(person);
         return personRecordOptional.map(personRecordToPost
                 -> new ResponseEntity<>(person, HttpStatus.OK)).orElseGet(()
                 -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
     }
 
     /**
-     * @param person Request Body
-     * @param id     index of array
-     * @return Updated Person
-     * @throws ParseException throws exeption in case of parsing error with JSON
+     * Update the information of an existing person.
+     *
+     * @param person Request Body containing the new information of the person
+     * @param id     Identifier of the person to update
+     * @return ResponseEntity with the updated person or a HttpStatus.NOT_FOUND code
+     * @throws ParseException in case of parsing error
      */
     @PutMapping("/Person/{id}")
     public ResponseEntity<Person> putPersonRecord(@RequestBody Person person, @PathVariable Long id) throws ParseException {
@@ -112,17 +122,16 @@ public class PersonController {
     }
 
     /**
-     * @param lastName  lastName is a filter used as identifier
-     * @param firstName firtName is a filter used as identifier
-     * @return Http code
+     * Delete a person by their last name and first name.
+     *
+     * @param lastName  Last name of the person to delete
+     * @param firstName First name of the person to delete
+     * @return ResponseEntity with a HttpStatus.OK code
      */
     @DeleteMapping("/Person")
     @ResponseBody
     public ResponseEntity<Person> deletePersonRecord(@RequestParam String lastName, String firstName) {
-
-
         personService.deletePerson(lastName, firstName);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

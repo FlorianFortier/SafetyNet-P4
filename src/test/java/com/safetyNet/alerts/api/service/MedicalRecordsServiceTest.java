@@ -30,6 +30,6 @@ public class MedicalRecordsServiceTest {
 
     public void shouldReturnTheRightMedicalRecord() {
 
-        MedicalRecord found = medicalRecordService.getMedicalRecord()
+//        MedicalRecord found = medicalRecordService.getMedicalRecord()
     }
 }

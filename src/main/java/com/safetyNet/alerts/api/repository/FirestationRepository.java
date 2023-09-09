@@ -2,7 +2,6 @@ package com.safetyNet.alerts.api.repository;
 
 import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.Person;
-import com.safetyNet.alerts.api.service.FirestationService;
 import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,15 +18,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
-
 /**
  * Repository for managing Firestation data.
  */
 @Repository
 public class FirestationRepository extends ReadDataFromJson {
     private final JSONObject firestationRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
-    Logger logger = LoggerFactory.getLogger(FirestationRepository.class);
+    static Logger logger = LoggerFactory.getLogger(FirestationRepository.class);
     JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
     JSONArray persons = (JSONArray) firestationRecordJSON.get("persons");
     JSONArray medicalRecords = (JSONArray) firestationRecordJSON.get("medicalrecords");
@@ -112,18 +109,14 @@ public class FirestationRepository extends ReadDataFromJson {
                             } else {
                                 nbAdult++;
                             }
+                            LinkedHashMap<String, Object> personData = new LinkedHashMap<>();
+                            personData.put("firstName", personFirstName);
+                            personData.put("lastName", personLastName);
+                            personData.put("address", personAddress);
+                            personData.put("phone", personJson.get("phone"));
+                            personData.put("age", age);
 
-                            Person person = new Person(
-                                    personFirstName,
-                                    personLastName,
-                                    personAddress,
-                                    (String) personJson.get("city"),
-                                    (String) personJson.get("zip"),
-                                    (String) personJson.get("phone"),
-                                    (String) personJson.get("email"),
-                                    age
-                            );
-                            personRelatedToStationRecordList.add(person);
+                            personRelatedToStationRecordList.add(personData);
                         }
                     }
                 }
@@ -138,6 +131,12 @@ public class FirestationRepository extends ReadDataFromJson {
         return (JSONArray) personRelatedToStationRecordList;
     }
 
+    /**
+     * Retrieve persons related to multiple fire stations.
+     *
+     * @param stationsNumber The list of station numbers.
+     * @return A JSON array containing information about persons related to each station.
+     */
     public JSONArray floodByStation(List<String> stationsNumber) {
 
         JSONArray result = new JSONArray();
@@ -186,6 +185,7 @@ public class FirestationRepository extends ReadDataFromJson {
             }
             result.add(stationData);
             stationData.put("personList", personList);
+            logger.info(" List of person by station retrieve successfully");
         }
 
         return result;
@@ -224,6 +224,7 @@ public class FirestationRepository extends ReadDataFromJson {
             return period.getYears();
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Erreur de parse sur la date");
             return 0;
         }
     }

@@ -1,7 +1,6 @@
 package com.safetyNet.alerts.api.repository;
 
 import com.safetyNet.alerts.api.entity.Person;
-import com.safetyNet.alerts.api.service.PersonService;
 import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,13 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Optional;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
 import static com.safetyNet.alerts.api.repository.FirestationRepository.findMatchingMedicalRecord;
@@ -30,6 +23,7 @@ public class PersonRepository extends ReadDataFromJson {
     private final JSONObject personJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
     Logger logger = LoggerFactory.getLogger(PersonRepository.class);
     JSONArray personArray = (JSONArray) personJSON.get("persons");
+    JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
 
     /**
      * Constructor for PersonRepository.
@@ -67,13 +61,11 @@ public class PersonRepository extends ReadDataFromJson {
      * @return A JSONArray containing children and their relatives.
      */
     public JSONArray childByAddress(String address) {
-        JSONArray persons = (JSONArray) personJSON.get("persons");
-        JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
         JSONArray childByAddressWithRelatives = new JSONArray();
         JSONArray relatives = new JSONArray();
-        Set<Person> relativesSet = new HashSet<>(); // Using set to get rid of duplications
+        Set<LinkedHashMap<String, Object>> relativesSet = new HashSet<>(); // Using set to get rid of duplications
 
-        for (Object personObj : persons) {
+        for (Object personObj : personArray) {
             JSONObject personJson = (JSONObject) personObj;
             String personAddress = (String) personJson.get("address");
 
@@ -86,29 +78,24 @@ public class PersonRepository extends ReadDataFromJson {
                     String birthdate = (String) matchingMedicalRecord.get("birthdate");
                     int age = calculateAge(birthdate);
                     if (age <= 18) {
-                        Person person = new Person(
-                                personFirstName,
-                                personLastName,
-                                personAddress,
-                                (String) personJson.get("city"),
-                                (String) personJson.get("zip"),
-                                (String) personJson.get("phone"),
-                                (String) personJson.get("email"),
-                                age
-                        );
-                        childByAddressWithRelatives.add(person); // Add person to Set to eliminate duplication
+                        LinkedHashMap<String, Object> personData = new LinkedHashMap<>();
+                        personData.put("firstName", personFirstName);
+                        personData.put("lastName", personLastName);
+                        personData.put("address", personAddress);
+                        personData.put("age", age);
+
+                        childByAddressWithRelatives.add(personData); // Add person to Set to eliminate duplication
                     } else if (!childByAddressWithRelatives.isEmpty()) {
-                        Person person = new Person(
-                                personFirstName,
-                                personLastName,
-                                personAddress,
-                                (String) personJson.get("city"),
-                                (String) personJson.get("zip"),
-                                (String) personJson.get("phone"),
-                                (String) personJson.get("email"),
-                                age
-                        );
-                        relativesSet.add(person);
+                        LinkedHashMap<String, Object> personData = new LinkedHashMap<>();
+                        personData.put("firstName", personFirstName);
+                        personData.put("lastName", personLastName);
+                        personData.put("address", personAddress);
+                        personData.put("city", personJson.get("city"));
+                        personData.put("zip", personJson.get("zip"));
+                        personData.put("phone", personJson.get("phone"));
+                        personData.put("email", personJson.get("email"));
+                        personData.put("age", age);
+                        relativesSet.add(personData);
                     }
                 }
             }
@@ -121,7 +108,7 @@ public class PersonRepository extends ReadDataFromJson {
             // Adds object "relativesObject" to "childByAddressWithRelatives"
             childByAddressWithRelatives.add(relativesObject);
         }
-        logger.info("Childs with relatives retrieved successfully");
+        logger.info("Children with relatives retrieved successfully");
         return childByAddressWithRelatives;
     }
 
@@ -149,6 +136,55 @@ public class PersonRepository extends ReadDataFromJson {
         return PersonList;
     }
 
+    /**
+     * Retrieve detailed information about a person by their first name and last name.
+     *
+     * @param firstName The first name of the person.
+     * @param lastName  The last name of the person.
+     * @return A JSONObject containing detailed information about the person.
+     */
+    public JSONArray personInfo(String firstName, String lastName) {
+        JSONArray returnPersonArray = new JSONArray();
+
+        Optional<JSONObject> personOptional = personArray.stream()
+                .filter(person -> ((JSONObject) person).get("firstName").equals(firstName) &&
+                        ((JSONObject) person).get("lastName").equals(lastName))
+                .findFirst();
+
+        if (personOptional.isPresent()) {
+            JSONObject personJson = personOptional.get();
+
+            Optional<JSONObject> medicalRecordOptional = medicalRecords.stream()
+                    .filter(medicalRecord -> ((JSONObject) medicalRecord).get("firstName").equals(firstName) &&
+                            ((JSONObject) medicalRecord).get("lastName").equals(lastName))
+                    .findFirst();
+
+            if (medicalRecordOptional.isPresent()) {
+                JSONObject medicalRecordJson = medicalRecordOptional.get();
+                JSONArray allergies = (JSONArray) medicalRecordJson.get("allergies");
+                JSONArray medications = (JSONArray) medicalRecordJson.get("medications");
+
+                int age = calculateAge((String) medicalRecordJson.get("birthdate"));
+
+                personJson.put("age", age);
+                personJson.put("allergies", allergies);
+                personJson.put("medications", medications);
+
+                returnPersonArray.add(personJson);
+                logger.info("Person retrieved successfully");
+            }
+        }
+
+        return returnPersonArray;
+    }
+
+
+    /**
+     * Retrieve phone numbers of individuals served by a fire station.
+     *
+     * @param firestationNumber The number of the fire station.
+     * @return A JSONArray containing phone numbers of individuals served by the fire station.
+     */
     public JSONArray phoneAlertByStation(String firestationNumber) {
         JSONArray persons = (JSONArray) personJSON.get("persons");
         JSONArray firestations = (JSONArray) personJSON.get("firestations");
@@ -172,9 +208,10 @@ public class PersonRepository extends ReadDataFromJson {
     }
 
     /**
+     * Retrieve a list of residents at a given address who may require assistance in case of fire.
      *
-     * @param address
-     * @return
+     * @param address The address to search for.
+     * @return A JSONArray containing information about residents at the address.
      */
     public JSONArray fire(String address) {
         JSONArray persons = (JSONArray) personJSON.get("persons");
@@ -217,7 +254,6 @@ public class PersonRepository extends ReadDataFromJson {
         logger.info("List of residents retrieved successfully");
         return residentList;
     }
-
 
     /**
      * Delete a Person by their last name and first name.
