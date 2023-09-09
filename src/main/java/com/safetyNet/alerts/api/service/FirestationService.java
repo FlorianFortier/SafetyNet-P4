@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -50,6 +51,16 @@ public class FirestationService {
     public JSONArray personByStation(String stationNumber) {
 
         return firestationRepository.personByStation(stationNumber);
+    }
+
+    /**
+     *
+     * @param stationNumber
+     * @return
+     */
+    public JSONArray floodByStation(List<String> stationNumber) {
+
+        return firestationRepository.floodByStation(stationNumber);
     }
     /**
      * @param address Adress is a filter used as identifier

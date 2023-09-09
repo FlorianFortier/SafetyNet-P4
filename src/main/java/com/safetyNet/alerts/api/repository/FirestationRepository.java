@@ -15,8 +15,11 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+
+import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
 
 /**
  * Repository for managing Firestation data.
@@ -25,7 +28,9 @@ import java.util.Optional;
 public class FirestationRepository extends ReadDataFromJson {
     private final JSONObject firestationRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
     Logger logger = LoggerFactory.getLogger(FirestationRepository.class);
-
+    JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
+    JSONArray persons = (JSONArray) firestationRecordJSON.get("persons");
+    JSONArray medicalRecords = (JSONArray) firestationRecordJSON.get("medicalrecords");
 
     /**
      * Constructor.
@@ -42,8 +47,7 @@ public class FirestationRepository extends ReadDataFromJson {
      * @return An optional containing the Firestation if found.
      */
     public Optional<Firestation> findById(Long id) {
-        JSONArray firestationArray = (JSONArray) firestationRecordJSON.get("firestations");
-        JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));
+        JSONObject recordObj = (JSONObject) firestationRecordArray.get(Math.toIntExact(id));
         Firestation firestation = new Firestation(
                 (String) recordObj.get("address"),
                 (String) recordObj.get("station")
@@ -58,7 +62,6 @@ public class FirestationRepository extends ReadDataFromJson {
      * @return A list of Firestations.
      */
     public Iterable<Firestation> findAll() {
-        JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
         List<Firestation> firestationRecordList = new ArrayList<>();
 
         for (Object o : firestationRecordArray) {
@@ -81,18 +84,15 @@ public class FirestationRepository extends ReadDataFromJson {
      * @return A JSON array containing persons and count information.
      */
     public JSONArray personByStation(String stationNumber) {
-        JSONArray firestations = (JSONArray) firestationRecordJSON.get("firestations");
+
         JSONArray personRelatedToStationRecordList = new JSONArray();
         int nbChild = 0;
         int nbAdult = 0;
 
-        for (Object firestationObj : firestations) {
+        for (Object firestationObj : firestationRecordArray) {
             JSONObject firestation = (JSONObject) firestationObj;
             if (firestation.get("station").equals(stationNumber)) {
                 String firestationAddress = (String) firestation.get("address");
-
-                JSONArray persons = (JSONArray) firestationRecordJSON.get("persons");
-                JSONArray medicalRecords = (JSONArray) firestationRecordJSON.get("medicalrecords");
 
                 for (Object personObj : persons) {
                     JSONObject personJson = (JSONObject) personObj;
@@ -136,6 +136,59 @@ public class FirestationRepository extends ReadDataFromJson {
         logger.info("Number of Adults: " + nbAdult);
         logger.info("Number of Children: " + nbChild);
         return (JSONArray) personRelatedToStationRecordList;
+    }
+
+    public JSONArray floodByStation(List<String> stationsNumber) {
+
+        JSONArray result = new JSONArray();
+
+        for (String stationNumber : stationsNumber) {
+            JSONObject stationData = new JSONObject();
+            stationData.put("stationNumber", stationNumber);
+
+            JSONArray personList = new JSONArray();
+
+            for (Object firestationObj : firestationRecordArray) {
+                JSONObject firestation = (JSONObject) firestationObj;
+                if (firestation.get("station").equals(stationNumber)) {
+                    String firestationAddress = (String) firestation.get("address");
+
+                    for (Object personObj : persons) {
+                        JSONObject personJson = (JSONObject) personObj;
+                        String personAddress = (String) personJson.get("address");
+
+                        if (personAddress.equals(firestationAddress)) {
+                            String personLastName = (String) personJson.get("lastName");
+                            String personFirstName = (String) personJson.get("firstName");
+                            String personPhone = (String) personJson.get("phone");
+
+                            JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
+
+                            if (matchingMedicalRecord != null) {
+                                String birthdate = (String) matchingMedicalRecord.get("birthdate");
+                                int age = calculateAge(birthdate);
+
+                                // Création d'un LinkedHashMap pour stocker les informations dans l'ordre souhaité
+                                LinkedHashMap<String, Object> personData = new LinkedHashMap<>();
+                                personData.put("allergies", new ArrayList<>());
+                                personData.put("firstName", personFirstName);
+                                personData.put("lastName", personLastName);
+                                personData.put("address", personJson.get("address"));
+                                personData.put("phone", personPhone);
+                                personData.put("medications", new ArrayList<>());
+                                personData.put("age", age);
+
+                                personList.add(personData);
+                            }
+                        }
+                    }
+                }
+            }
+            result.add(stationData);
+            stationData.put("personList", personList);
+        }
+
+        return result;
     }
 
     /**
@@ -182,7 +235,6 @@ public class FirestationRepository extends ReadDataFromJson {
      * @param station The station number to delete.
      */
     public void deleteById(String address, String station) {
-        JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
         JSONObject recordObj = (JSONObject) firestationRecordArray.stream()
                 .filter(firestation -> ((JSONObject) firestation).get("address").equals(address) &&
                         ((JSONObject) firestation).get("station").equals(station)).findFirst().get();

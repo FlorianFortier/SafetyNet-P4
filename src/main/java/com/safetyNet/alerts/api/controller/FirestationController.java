@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -41,9 +42,14 @@ public class FirestationController {
      * @return
      */
     @GetMapping("/firestation")
-    public JSONArray getFirestations(@RequestParam String stationNumber) {
+    public JSONArray personByStation(@RequestParam String stationNumber) {
 
         return firestationService.personByStation(stationNumber);
+    }
+    @GetMapping("/flood/stations")
+    public JSONArray floodByStation(@RequestParam List<String> stationsNumber) {
+
+        return firestationService.floodByStation(stationsNumber);
     }
     /**
      * @param id Array Index

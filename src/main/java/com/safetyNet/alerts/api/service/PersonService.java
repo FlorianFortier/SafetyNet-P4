@@ -58,7 +58,7 @@ public class PersonService {
 
     /**
      *
-     * @param firestation
+     * @param address
      * @return
      */
     public JSONArray fire(String address) {
