@@ -12,7 +12,9 @@ public class Person {
     String zip;
     String phone;
     String email;
+    Integer age;
     /**
+     *  Standard Contrustor
      * @param firstName First name of the person
      * @param lastName Last name of the person
      * @param address Address of the person
@@ -30,4 +32,27 @@ public class Person {
         this.phone=phone;
         this.email=email;
     }
+
+    /**
+     * Contructor for Age of person result of LEFT JOINT with medical Record
+     * @param firstName
+     * @param lastName
+     * @param address
+     * @param city
+     * @param zip
+     * @param phone
+     * @param email
+     * @param age
+     */
+    public Person(String firstName, String lastName, String address, String city, String zip, String phone, String email, Integer age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city=city;
+        this.zip=zip;
+        this.phone=phone;
+        this.email=email;
+        this.age=age;
+    }
+
 }

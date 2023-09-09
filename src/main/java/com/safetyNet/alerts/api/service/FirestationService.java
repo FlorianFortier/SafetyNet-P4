@@ -1,6 +1,7 @@
 package com.safetyNet.alerts.api.service;
 
 import com.safetyNet.alerts.api.entity.Firestation;
+import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.FirestationRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,10 @@ public class FirestationService {
 
         return firestationRepository.findAll();
     }
+    public Iterable<Person> personByStation(String stationNumber) {
 
+        return firestationRepository.personByStation(stationNumber);
+    }
     /**
      *
      * @param address Adress is a filter used as identifier

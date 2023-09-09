@@ -2,6 +2,7 @@ package com.safetyNet.alerts.api.controller;
 
 import com.safetyNet.alerts.api.entity.Firestation;
 
+import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.service.FirestationService;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,15 @@ public class FirestationController {
      * @return - An Iterable object of Employee full filled
      */
     @GetMapping("/Firestations")
-    public Iterable<Firestation> getFirestations() throws ParseException {
+    public Iterable<Firestation> getFirestations() {
 
         return firestationService.getFirestations();
     }
+    @GetMapping("/firestation")
+    public Iterable<Person> getFirestations(@RequestParam String stationNumber) {
 
+        return firestationService.personByStation(stationNumber);
+    }
     /**
      *
      * @param id Array Index
