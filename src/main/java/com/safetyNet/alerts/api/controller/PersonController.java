@@ -67,6 +67,16 @@ public class PersonController {
     }
 
     /**
+     *
+     * @param address
+     * @return
+     */
+    @GetMapping("/fire")
+    public JSONArray fire(@RequestParam String address) {
+
+        return personService.fire(address);
+    }
+    /**
      * @param person Body request
      * @return The newly created Person
      */

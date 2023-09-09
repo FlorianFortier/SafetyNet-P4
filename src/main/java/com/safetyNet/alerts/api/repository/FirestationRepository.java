@@ -26,7 +26,6 @@ public class FirestationRepository extends ReadDataFromJson {
     private final JSONObject firestationRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
     Logger logger = LoggerFactory.getLogger(FirestationRepository.class);
 
-    FirestationService firestationService;
 
     /**
      * Constructor.

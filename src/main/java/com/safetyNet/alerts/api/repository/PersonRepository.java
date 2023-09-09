@@ -1,6 +1,7 @@
 package com.safetyNet.alerts.api.repository;
 
 import com.safetyNet.alerts.api.entity.Person;
+import com.safetyNet.alerts.api.service.PersonService;
 import com.safetyNet.alerts.api.util.ReadDataFromJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,11 +12,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
 
 import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
+import static com.safetyNet.alerts.api.repository.FirestationRepository.findMatchingMedicalRecord;
 
 /**
  * Repository class for managing Person data.
@@ -76,7 +80,7 @@ public class PersonRepository extends ReadDataFromJson {
             if (personAddress.equals(address)) {
                 String personFirstName = (String) personJson.get("firstName");
                 String personLastName = (String) personJson.get("lastName");
-                JSONObject matchingMedicalRecord = FirestationRepository.findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
+                JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
 
                 if (matchingMedicalRecord != null) {
                     String birthdate = (String) matchingMedicalRecord.get("birthdate");
@@ -163,7 +167,55 @@ public class PersonRepository extends ReadDataFromJson {
                 }
             }
         }
+        logger.info("List of phone numbers retrieved successfully");
         return phonesNumbersList;
+    }
+
+    /**
+     *
+     * @param address
+     * @return
+     */
+    public JSONArray fire(String address) {
+        JSONArray persons = (JSONArray) personJSON.get("persons");
+        JSONArray firestations = (JSONArray) personJSON.get("firestations");
+        JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
+        JSONArray residentList = new JSONArray();
+
+        for (Object firestationObj : firestations) {
+            JSONObject firestation = (JSONObject) firestationObj;
+            if (firestation.get("address").equals(address)) {
+                for (Object personJson : persons) {
+                    JSONObject personObj = (JSONObject) personJson;
+                    String personAddress = (String) personObj.get("address");
+
+                    if (personAddress.equals(address)) {
+                        String personLastName = (String) personObj.get("lastName");
+                        String personFirstName = (String) personObj.get("firstName");
+                        String personPhone = (String) personObj.get("phone");
+                        JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
+
+                        if (matchingMedicalRecord != null) {
+                            String birthdate = (String) matchingMedicalRecord.get("birthdate");
+                            int age = calculateAge(birthdate);
+
+                            JSONObject resident = new JSONObject();
+                            resident.put("firstName", personFirstName);
+                            resident.put("lastName", personLastName);
+                            resident.put("phone", personPhone);
+                            resident.put("age", age);
+                            resident.put("allergies", matchingMedicalRecord.get("allergies"));
+                            resident.put("medications", matchingMedicalRecord.get("medications"));
+                            resident.put("stationNumber", firestation.get("station"));
+
+                            residentList.add(resident);
+                        }
+                    }
+                }
+            }
+        }
+        logger.info("List of residents retrieved successfully");
+        return residentList;
     }
 
 
