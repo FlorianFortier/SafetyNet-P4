@@ -4,6 +4,7 @@ import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.MedicalRecord;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.service.PersonService;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,11 @@ public class PersonController {
         return personService.getPersons();
     }
 
+    /**
+     * @param id
+     * @return
+     * @throws ParseException
+     */
     @GetMapping("/Person")
     public ResponseEntity<Person> getPerson(@RequestParam Long id) throws ParseException {
         Optional<Person> PersonOptional;
@@ -38,6 +44,16 @@ public class PersonController {
 
         return PersonOptional.map(person -> new ResponseEntity<>(person, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ParseException
+     */
+    @GetMapping("/childAlert")
+    public JSONArray childByAddress(@RequestParam String address) throws ParseException {
+        return personService.childByAddress(address);
     }
 
     /**

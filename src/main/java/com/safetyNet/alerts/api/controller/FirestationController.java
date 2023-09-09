@@ -4,6 +4,7 @@ import com.safetyNet.alerts.api.entity.Firestation;
 
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.service.FirestationService;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class FirestationController {
     }
 
     @GetMapping("/firestation")
-    public Iterable<Person> getFirestations(@RequestParam String stationNumber) {
+    public JSONArray getFirestations(@RequestParam String stationNumber) {
 
         return firestationService.personByStation(stationNumber);
     }

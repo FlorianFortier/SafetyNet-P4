@@ -9,7 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -19,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for managing Firestation data.
+ */
 @Repository
 public class FirestationRepository extends ReadDataFromJson {
     private final JSONObject firestationRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
@@ -27,41 +29,42 @@ public class FirestationRepository extends ReadDataFromJson {
     FirestationService firestationService;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @throws ParseException If there is an error parsing JSON data.
      */
     public FirestationRepository() throws ParseException {
     }
 
     /**
-     * @param id Array index
-     * @return a Single Firestation
+     * Find a Firestation by its ID (array index).
+     *
+     * @param id The array index.
+     * @return An optional containing the Firestation if found.
      */
     public Optional<Firestation> findById(Long id) {
-
         JSONArray firestationArray = (JSONArray) firestationRecordJSON.get("firestations");
         JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));
         Firestation firestation = new Firestation(
-                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
                 (String) recordObj.get("address"),
                 (String) recordObj.get("station")
         );
-        logger.info("station retrieved successfully");
+        logger.info("Firestation retrieved successfully");
         return Optional.of(firestation);
     }
 
     /**
-     * Retrieve all Firestation from the JSON file.
+     * Retrieve all Firestations from the JSON file.
+     *
+     * @return A list of Firestations.
      */
     public Iterable<Firestation> findAll() {
-
         JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
         List<Firestation> firestationRecordList = new ArrayList<>();
 
-        // Assuming Firestation class has a constructor that takes relevant properties as arguments.
         for (Object o : firestationRecordArray) {
             JSONObject recordObj = (JSONObject) o;
             Firestation firestation = new Firestation(
-                    // Extract and convert properties from recordObj to corresponding Firestation fields.
                     (String) recordObj.get("address"),
                     (String) recordObj.get("station")
             );
@@ -72,6 +75,12 @@ public class FirestationRepository extends ReadDataFromJson {
         return firestationRecordList;
     }
 
+    /**
+     * Retrieve persons related to a fire station and count adults and children.
+     *
+     * @param stationNumber The station number.
+     * @return A JSON array containing persons and count information.
+     */
     public JSONArray personByStation(String stationNumber) {
         JSONArray firestations = (JSONArray) firestationRecordJSON.get("firestations");
         JSONArray personRelatedToStationRecordList = new JSONArray();
@@ -94,11 +103,10 @@ public class FirestationRepository extends ReadDataFromJson {
                         String personFirstName = (String) personJson.get("firstName");
                         String personLastName = (String) personJson.get("lastName");
 
-                        // Search for the matching medical record
                         JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
                         if (matchingMedicalRecord != null) {
                             String birthdate = (String) matchingMedicalRecord.get("birthdate");
-                            int age = calculateAge(birthdate); // Calculate age from birthdate
+                            int age = calculateAge(birthdate);
 
                             if (age < 18) {
                                 nbChild++;
@@ -106,7 +114,6 @@ public class FirestationRepository extends ReadDataFromJson {
                                 nbAdult++;
                             }
 
-                            // Assuming there's a Person constructor that takes relevant properties as arguments
                             Person person = new Person(
                                     personFirstName,
                                     personLastName,
@@ -115,8 +122,7 @@ public class FirestationRepository extends ReadDataFromJson {
                                     (String) personJson.get("zip"),
                                     (String) personJson.get("phone"),
                                     (String) personJson.get("email"),
-                                    age // Add age to Person constructor
-                                    // Add other relevant properties here
+                                    age
                             );
                             personRelatedToStationRecordList.add(person);
                         }
@@ -124,6 +130,7 @@ public class FirestationRepository extends ReadDataFromJson {
                 }
             }
         }
+        // Add count information to the JSON array
         personRelatedToStationRecordList.add("Number of childs = " + nbChild);
         personRelatedToStationRecordList.add("Number of adults = " + nbAdult);
         logger.info("PersonByStation records retrieved successfully");
@@ -133,12 +140,14 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param firstName
-     * @param lastName
-     * @param medicalRecords
-     * @return
+     * Find a matching medical record for a person.
+     *
+     * @param firstName      The person's first name.
+     * @param lastName       The person's last name.
+     * @param medicalRecords The list of medical records.
+     * @return The matching medical record if found, or null if not found.
      */
-    private JSONObject findMatchingMedicalRecord(String firstName, String lastName, JSONArray medicalRecords) {
+    public static JSONObject findMatchingMedicalRecord(String firstName, String lastName, JSONArray medicalRecords) {
         for (Object medicalRecordObj : medicalRecords) {
             JSONObject medicalRecord = (JSONObject) medicalRecordObj;
             if (medicalRecord.get("firstName").equals(firstName) && medicalRecord.get("lastName").equals(lastName)) {
@@ -149,31 +158,29 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param birthdate
-     * @return
+     * Calculate age based on birthdate.
+     *
+     * @param birthdate The birthdate string.
+     * @return The calculated age.
      */
-    private int calculateAge(String birthdate) {
+    public static int calculateAge(String birthdate) {
         try {
-            // Parse the birthdate string into a LocalDate
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy"); // Replace with your date format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             LocalDate birthDate = LocalDate.parse(birthdate, formatter);
-
-            // Calculate the age based on the current date
             LocalDate currentDate = LocalDate.now();
             Period period = Period.between(birthDate, currentDate);
-
-            // Return the age
             return period.getYears();
         } catch (Exception e) {
-            // Handle parsing errors or other exceptions as needed
             e.printStackTrace();
-            return 0; // Default age in case of an error
+            return 0;
         }
     }
 
     /**
-     * @param address address is a filter used as identifier
-     * @param station station is a filter used as identifier
+     * Delete a Firestation by address and station number.
+     *
+     * @param address The address to delete.
+     * @param station The station number to delete.
      */
     public void deleteById(String address, String station) {
         JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get("firestations");
@@ -185,11 +192,12 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param firestation Body Request
-     * @return saved Firestation
+     * Save a Firestation.
+     *
+     * @param firestation The Firestation to save.
+     * @return The saved Firestation.
      */
     public Firestation save(Firestation firestation) {
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("address", firestation.getAddress());
         jsonObject.put("station", firestation.getStation());
@@ -198,21 +206,21 @@ public class FirestationRepository extends ReadDataFromJson {
     }
 
     /**
-     * @param id          Array Index
-     * @param firestation Body Request
-     * @return updated Firestation
+     * Update a Firestation by ID (array index).
+     *
+     * @param id          The ID (array index) of the Firestation to update.
+     * @param firestation The updated Firestation data.
+     * @return The updated Firestation.
      */
     public Firestation update(Long id, Firestation firestation) {
         JSONArray firestationArray = (JSONArray) firestationRecordJSON.get("firestations");
         JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));
         Firestation newFirestation = new Firestation(
-                // Extract and convert properties from recordObj to corresponding MedicalRecord fields.
                 firestation.getAddress(),
                 firestation.getStation()
         );
         logger.info("Firestation updated successfully");
         save(firestation);
-
         return newFirestation;
     }
 }

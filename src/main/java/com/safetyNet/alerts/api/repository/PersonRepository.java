@@ -12,6 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+
+import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
 
 @Repository
 public class PersonRepository extends ReadDataFromJson {
@@ -46,6 +50,71 @@ public class PersonRepository extends ReadDataFromJson {
         );
         logger.info("Person retrieved successfully");
         return Optional.of(person);
+    }
+
+    /**
+     * @param address
+     * @return
+     */
+    public JSONArray childByAddress(String address) {
+        JSONArray persons = (JSONArray) personJSON.get("persons");
+        JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
+        JSONArray childByAddressWithRelatives = new JSONArray();
+        JSONArray relatives = new JSONArray();
+        Set<Person> relativesSet = new HashSet<>(); // Using set to get rid of duplications
+
+        for (Object personObj : persons) {
+            JSONObject personJson = (JSONObject) personObj;
+            String personAddress = (String) personJson.get("address");
+
+            if (personAddress.equals(address)) {
+                String personFirstName = (String) personJson.get("firstName");
+                String personLastName = (String) personJson.get("lastName");
+                JSONObject matchingMedicalRecord = FirestationRepository.findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);
+
+                if (matchingMedicalRecord != null) {
+                    String birthdate = (String) matchingMedicalRecord.get("birthdate");
+                    int age = calculateAge(birthdate);
+                    if (age <= 18) {
+                        Person person = new Person(
+                                personFirstName,
+                                personLastName,
+                                personAddress,
+                                (String) personJson.get("city"),
+                                (String) personJson.get("zip"),
+                                (String) personJson.get("phone"),
+                                (String) personJson.get("email"),
+                                age
+                        );
+                        childByAddressWithRelatives.add(person); // Add person to Set to eliminate duplication
+                    } else {
+                        Person person = new Person(
+                                personFirstName,
+                                personLastName,
+                                personAddress,
+                                (String) personJson.get("city"),
+                                (String) personJson.get("zip"),
+                                (String) personJson.get("phone"),
+                                (String) personJson.get("email"),
+                                age
+                        );
+                        relativesSet.add(person);
+                    }
+
+                }
+            }
+        }
+        if (!relativesSet.isEmpty()) {
+            // Creates an object to hold "Set" of relatives
+            JSONObject relativesObject = new JSONObject();
+            relativesObject.put("relatives", relativesSet);
+
+            // Adds object "relativesObject" to "childByAddressWithRelatives"
+            childByAddressWithRelatives.add(relativesObject);
+
+        }
+        logger.info("Childs with relatives retrieved successfully");
+        return childByAddressWithRelatives;
     }
 
     /**

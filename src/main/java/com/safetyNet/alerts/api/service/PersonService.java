@@ -3,6 +3,7 @@ package com.safetyNet.alerts.api.service;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.PersonRepository;
 import lombok.Data;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,9 @@ public class PersonService {
     public Optional<Person> getPerson(final Long id) {
         return personRepository.findById(id);
     }
-
+    public JSONArray childByAddress(final String address) {
+        return personRepository.childByAddress(address);
+    }
     /**
      * Read
      *

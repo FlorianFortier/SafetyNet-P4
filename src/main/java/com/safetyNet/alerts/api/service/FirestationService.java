@@ -4,6 +4,7 @@ import com.safetyNet.alerts.api.entity.Firestation;
 import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.FirestationRepository;
 import lombok.Data;
+import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -41,7 +42,7 @@ public class FirestationService {
         return firestationRepository.findAll();
     }
 
-    public Iterable<Person> personByStation(String stationNumber) {
+    public JSONArray personByStation(String stationNumber) {
 
         return firestationRepository.personByStation(stationNumber);
     }
