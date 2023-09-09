@@ -86,6 +86,17 @@ public class PersonService {
     }
 
     /**
+     * Retrieve a list of unique email addresses for residents of a specific city.
+     *
+     * @param city The city for which to retrieve the email addresses.
+     * @return A JSONArray containing a single JSONObject with a "mails" field, which is a set of unique email addresses.
+     */
+    public JSONArray communityEmail(String city) {
+        // Delegate the request to the corresponding repository method to handle the data retrieval.
+        return personRepository.communityEmail(city);
+    }
+
+    /**
      * Create a new person.
      *
      * @param person Request Body containing the information of the person to create

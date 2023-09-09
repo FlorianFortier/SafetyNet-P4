@@ -24,6 +24,7 @@ public class PersonRepository extends ReadDataFromJson {
     Logger logger = LoggerFactory.getLogger(PersonRepository.class);
     JSONArray personArray = (JSONArray) personJSON.get("persons");
     JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
+    JSONArray firestations = (JSONArray) personJSON.get("firestations");
 
     /**
      * Constructor for PersonRepository.
@@ -186,14 +187,12 @@ public class PersonRepository extends ReadDataFromJson {
      * @return A JSONArray containing phone numbers of individuals served by the fire station.
      */
     public JSONArray phoneAlertByStation(String firestationNumber) {
-        JSONArray persons = (JSONArray) personJSON.get("persons");
-        JSONArray firestations = (JSONArray) personJSON.get("firestations");
         JSONArray phonesNumbersList = new JSONArray();
         for (Object firestationObj : firestations) {
             JSONObject firestation = (JSONObject) firestationObj;
             if (firestation.get("station").equals(firestationNumber)) {
                 String firestationAddress = (String) firestation.get("address");
-                for (Object personObj : persons) {
+                for (Object personObj : personArray) {
                     JSONObject personJson = (JSONObject) personObj;
                     String personAddress = (String) personJson.get("address");
                     if (personAddress.equals(firestationAddress)) {
@@ -214,15 +213,12 @@ public class PersonRepository extends ReadDataFromJson {
      * @return A JSONArray containing information about residents at the address.
      */
     public JSONArray fire(String address) {
-        JSONArray persons = (JSONArray) personJSON.get("persons");
-        JSONArray firestations = (JSONArray) personJSON.get("firestations");
-        JSONArray medicalRecords = (JSONArray) personJSON.get("medicalrecords");
-        JSONArray residentList = new JSONArray();
+          JSONArray residentList = new JSONArray();
 
         for (Object firestationObj : firestations) {
             JSONObject firestation = (JSONObject) firestationObj;
             if (firestation.get("address").equals(address)) {
-                for (Object personJson : persons) {
+                for (Object personJson : personArray) {
                     JSONObject personObj = (JSONObject) personJson;
                     String personAddress = (String) personObj.get("address");
 
@@ -253,6 +249,33 @@ public class PersonRepository extends ReadDataFromJson {
         }
         logger.info("List of residents retrieved successfully");
         return residentList;
+    }
+
+    /**
+     * Retrieves a list of unique email addresses for residents of a specific city.
+     *
+     * @param city The city for which to retrieve the email addresses.
+     * @return A JSONArray containing a single JSONObject with a "mails" field, which is a set of unique email addresses.
+     */
+    public JSONArray communityEmail(String city) {
+        JSONArray mailList = new JSONArray(); // Initialize a JSONArray to store the result.
+        JSONObject mailObj = new JSONObject(); // Initialize a JSONObject to store the email addresses.
+        Set<Object> mails = new HashSet<>(); // Use a Set to prevent duplicates of email addresses.
+
+        // Iterate through the personArray to find residents of the specified city.
+        for (Object personJson : personArray) {
+            JSONObject personObj = (JSONObject) personJson;
+
+            // Check if the person's city matches the specified city.
+            if (personObj.get("city").equals(city)) {
+                mails.add(personObj.get("email")); // Add the email address to the set.
+            }
+        }
+
+        mailObj.put("mails", mails); // Create a JSONObject with the unique email addresses.
+        mailList.add(mailObj); // Add the JSONObject to the JSONArray.
+
+        return mailList; // Return the list of unique email addresses for the specified city.
     }
 
     /**

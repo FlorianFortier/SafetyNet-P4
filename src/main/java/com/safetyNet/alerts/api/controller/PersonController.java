@@ -86,7 +86,17 @@ public class PersonController {
     public JSONArray fire(@RequestParam String address) {
         return personService.fire(address);
     }
-
+    /**
+     * retrieve a list of unique email addresses for residents of a specific city.
+     *
+     * @param city The city for which to retrieve the email addresses.
+     * @return A JSONArray containing a single JSONObject with a "mails" field, which is a set of unique email addresses.
+     */
+    @GetMapping("/communityEmail")
+    public JSONArray communityEmail(@RequestParam String city) {
+        // Delegate the request to the corresponding service method to handle the business logic.
+        return personService.communityEmail(city);
+    }
     /**
      * Create a new person.
      *
