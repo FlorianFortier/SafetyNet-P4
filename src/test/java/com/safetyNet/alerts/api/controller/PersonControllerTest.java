@@ -7,9 +7,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +48,42 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("zip", is("97451")))
                 .andExpect(jsonPath("phone", is("841-874-6512")))
                 .andExpect(jsonPath("email", is("jaboyd@email.com")));
+    }
+    @Test
+    public void testPostASinglePerson() throws Exception {
+        mockMvc.perform(post("/Person")
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"address\":\"1509 Culver St\",\"city\":\"Culver\",\"zip\": \"97451\",\"phone\": \"841-874-6512\",\"email\": \"jaboyd@email.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("firstName", is("John")))
+                .andExpect(jsonPath("lastName", is("Boyd")))
+                .andExpect(jsonPath("address", is("1509 Culver St")))
+                .andExpect(jsonPath("city", is("Culver")))
+                .andExpect(jsonPath("zip", is("97451")))
+                .andExpect(jsonPath("phone", is("841-874-6512")))
+                .andExpect(jsonPath("email", is("jaboyd@email.com")));
+    }
+    @Test
+    public void testPutASinglePerson() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/Person/0")
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Test\",\"address\":\"1509 Culver St\",\"city\":\"Culver\",\"zip\": \"97451\",\"phone\": \"841-874-6512\",\"email\": \"jaboyd@email.com\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("firstName", is("John")))
+                .andExpect(jsonPath("lastName", is("Test")))
+                .andExpect(jsonPath("address", is("1509 Culver St")))
+                .andExpect(jsonPath("city", is("Culver")))
+                .andExpect(jsonPath("zip", is("97451")))
+                .andExpect(jsonPath("phone", is("841-874-6512")))
+                .andExpect(jsonPath("email", is("jaboyd@email.com")));
+
+    }
+    @Test
+    public void testDeleteASinglePerson() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/Person?firstName=John&lastName=Boyd"))
+                .andExpect(status().isOk());
+
+
     }
 }
 
