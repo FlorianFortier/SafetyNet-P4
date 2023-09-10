@@ -169,12 +169,12 @@ public class FirestationRepository extends ReadDataFromJson {
 
                                 // Création d'un LinkedHashMap pour stocker les informations dans l'ordre souhaité
                                 LinkedHashMap<String, Object> personData = new LinkedHashMap<>();
-                                personData.put("allergies", new ArrayList<>());
+                                personData.put("allergies", matchingMedicalRecord.get("allergies"));
                                 personData.put("firstName", personFirstName);
                                 personData.put("lastName", personLastName);
                                 personData.put("address", personJson.get("address"));
                                 personData.put("phone", personPhone);
-                                personData.put("medications", new ArrayList<>());
+                                personData.put("medications", matchingMedicalRecord.get("medications"));
                                 personData.put("age", age);
 
                                 personList.add(personData);

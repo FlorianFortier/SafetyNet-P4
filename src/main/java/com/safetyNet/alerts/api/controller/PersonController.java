@@ -90,7 +90,7 @@ public class PersonController {
      * retrieve a list of unique email addresses for residents of a specific city.
      *
      * @param city The city for which to retrieve the email addresses.
-     * @return A JSONArray containing a single JSONObject with a "mails" field, which is a set of unique email addresses.
+     * @return A JSONArray conta²ining a single JSONObject with a "mails" field, which is a set of unique email addresses.
      */
     @GetMapping("/communityEmail")
     public JSONArray communityEmail(@RequestParam String city) {

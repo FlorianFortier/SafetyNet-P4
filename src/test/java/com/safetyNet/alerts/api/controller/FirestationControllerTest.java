@@ -1,6 +1,7 @@
 package com.safetyNet.alerts.api.controller;
 
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -58,6 +59,26 @@ public class FirestationControllerTest {
                 .andExpect(jsonPath("address", is("Test")))
                 .andExpect(jsonPath("station", is("3")));
 
+    }
+    @Test
+    public void testGetFloodByStation() throws Exception {
+        mockMvc.perform(get("/flood/stations?stationsNumber=1,2,3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].personList[0].firstName", is("Peter")))
+                .andExpect(jsonPath("$[0].personList[0].lastName", is("Duncan")))
+                .andExpect(jsonPath("$[0].personList[0].age", is(23)))
+                .andExpect(jsonPath("$[0].personList[0].medications").value(Matchers.empty()))
+                .andExpect(jsonPath("$[0].personList[0].allergies[0]", is("shellfish")));
+    }
+    @Test
+    public void testGetPersonByStation() throws Exception {
+        mockMvc.perform(get("/firestation?stationNumber=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].firstName", is("Peter")))
+                .andExpect(jsonPath("$[0].lastName", is("Duncan")))
+                .andExpect(jsonPath("$[0].age", is(23)))
+                .andExpect(jsonPath("$[0].address", is("644 Gershwin Cir")))
+                .andExpect(jsonPath("$[0].phone", is("841-874-6512")));
     }
 
     @Test
