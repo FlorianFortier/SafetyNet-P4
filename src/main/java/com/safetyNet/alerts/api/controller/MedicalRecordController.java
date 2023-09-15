@@ -20,6 +20,7 @@ public class MedicalRecordController {
 
     @Autowired
     private MedicalRecordService medicalRecordsService;
+
     /**
      * Read - Get all medicalRecords
      *
@@ -31,7 +32,6 @@ public class MedicalRecordController {
     }
 
     /**
-     *
      * @param id Get a single Medical Record
      * @return Response Entity of Medical Record
      */
@@ -48,7 +48,6 @@ public class MedicalRecordController {
     }
 
     /**
-     *
      * @param medicalRecord Body Request
      * @return Response Entity of newly created Medical Record
      */
@@ -67,9 +66,8 @@ public class MedicalRecordController {
     }
 
     /**
-     *
      * @param medicalRecord Body Request
-     * @param id index of Array
+     * @param id            index of Array
      * @return Response Entity of updated Medical Record
      * @throws ParseException in case of JSON parsing Errors
      */
@@ -85,15 +83,13 @@ public class MedicalRecordController {
     }
 
     /**
-     *
-     * @param lastName lastName is a filter used as identifier
+     * @param lastName  lastName is a filter used as identifier
      * @param firstName firtName is a filter used as identifier
      * @return Http Code
      */
     @DeleteMapping("/MedicalRecord")
     @ResponseBody
     public ResponseEntity<MedicalRecord> deleteMedicalRecord(@RequestParam String lastName, String firstName) {
-
 
 
         medicalRecordsService.deleteMedicalRecord(lastName, firstName);

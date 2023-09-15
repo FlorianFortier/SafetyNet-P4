@@ -1,11 +1,14 @@
 package com.safetyNet.alerts.api.service;
 
 import com.safetyNet.alerts.api.entity.Firestation;
+import com.safetyNet.alerts.api.entity.Person;
 import com.safetyNet.alerts.api.repository.FirestationRepository;
 import lombok.Data;
+import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -15,7 +18,8 @@ public class FirestationService {
     private final FirestationRepository firestationRepository;
 
     /**
-     *  Constructor
+     * Constructor
+     *
      * @param firestationRepository repository of Firestation
      */
     public FirestationService(FirestationRepository firestationRepository) {
@@ -23,7 +27,6 @@ public class FirestationService {
     }
 
     /**
-     *
      * @param id array of index
      * @return An object of a single firestation
      */
@@ -33,7 +36,6 @@ public class FirestationService {
     }
 
     /**
-     *
      * @return All Firestations
      */
     public Iterable<Firestation> getFirestations() {
@@ -43,6 +45,24 @@ public class FirestationService {
 
     /**
      *
+     * @param stationNumber
+     * @return
+     */
+    public JSONArray personByStation(String stationNumber) {
+
+        return firestationRepository.personByStation(stationNumber);
+    }
+
+    /**
+     *
+     * @param stationNumber
+     * @return
+     */
+    public JSONArray floodByStation(List<String> stationNumber) {
+
+        return firestationRepository.floodByStation(stationNumber);
+    }
+    /**
      * @param address Adress is a filter used as identifier
      * @param station station is a filter used as identifier
      */
@@ -52,7 +72,6 @@ public class FirestationService {
     }
 
     /**
-     *
      * @param firestation Body Request
      * @return Saved firestation
      */
@@ -61,7 +80,6 @@ public class FirestationService {
     }
 
     /**
-     *
      * @param firestation Body Request
      * @return Optional Object of newly created Firestation
      */
@@ -70,18 +88,16 @@ public class FirestationService {
     }
 
     /**
-     *
      * @param firestation Body request
-     * @param id Array index
+     * @param id          Array index
      * @return updated Firestation Object
      */
     public Firestation putFirestation(Firestation firestation, @PathVariable long id) {
         Optional<Firestation> getterResponse = firestationRepository.findById(id);
+        firestationRepository.update(id, firestation);
         Firestation recordObj = getterResponse.get();
         recordObj.setAddress(firestation.getAddress());
         recordObj.setStation(firestation.getStation());
-
-        firestationRepository.save(recordObj);
 
         return recordObj;
     }

@@ -1,16 +1,20 @@
 package com.safetyNet.alerts.api.controller;
 
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
+
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.delete;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isEmptyString;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,9 +38,8 @@ public class MedicalRecordControllerTest {
                 .andExpect(jsonPath("$[0].medications[1]", is("hydrapermazol:100mg")))
                 .andExpect(jsonPath("$[0].allergies[0]", is("nillacilan")));
     }
-
     @Test
-    public  void testGetASingleMedicalRecord() throws Exception {
+    public void testGetASingleMedicalRecord() throws Exception {
         mockMvc.perform(get("/MedicalRecord?id=0"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
@@ -50,8 +53,8 @@ public class MedicalRecordControllerTest {
     @Test
     public void testPostASingleMedicalRecord() throws Exception {
         mockMvc.perform(post("/MedicalRecord")
-                .contentType("application/json")
-                .content("{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
                 .andExpect(jsonPath("lastName", is("Boyd")))
@@ -64,9 +67,9 @@ public class MedicalRecordControllerTest {
 
     @Test
     public void testPutASingleMedicalRecord() throws Exception {
-        mockMvc.perform(put("/MedicalRecord")
-                .contentType("application/json")
-                .content("{\"firstName\":\"John\",\"lastName\":\"Test\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
+        mockMvc.perform(MockMvcRequestBuilders.put("/MedicalRecord/0")
+                        .contentType("application/json")
+                        .content("{\"firstName\":\"John\",\"lastName\":\"Test\",\"birthdate\":\"03/06/1984\",\"medications\":[\"aznol:350mg\",\"hydrapermazol:100mg\"],\"allergies\":[\"nillacilan\"]}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("firstName", is("John")))
                 .andExpect(jsonPath("lastName", is("Test")))
@@ -78,7 +81,7 @@ public class MedicalRecordControllerTest {
 
     @Test
     public void testDeleteASingleMedicalRecord() throws Exception {
-        mockMvc.perform((RequestBuilder) delete("/MedicalRecord?lastName=Boyd"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/MedicalRecord?firstName=John&lastName=Boyd"))
                 .andExpect(status().isOk());
 
 

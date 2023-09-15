@@ -21,6 +21,7 @@ public class MedicalRecordRepository extends ReadDataFromJson {
 
     private final JSONObject medicalRecordJSON = readJsonFile("D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json");
     JSONArray medicalRecordArray = (JSONArray) medicalRecordJSON.get("medicalrecords");
+
     /**
      * Constructor
      */
@@ -77,8 +78,7 @@ public class MedicalRecordRepository extends ReadDataFromJson {
     }
 
     /**
-     *
-     * @param lastName lastName is a filter used as identifier
+     * @param lastName  lastName is a filter used as identifier
      * @param firstName firtName is a filter used as identifier
      */
     public void deleteById(String lastName, String firstName) {
@@ -92,7 +92,6 @@ public class MedicalRecordRepository extends ReadDataFromJson {
     }
 
     /**
-     *
      * @param medicalRecord Body Request
      * @return Saved Medical Record
      */
@@ -108,12 +107,11 @@ public class MedicalRecordRepository extends ReadDataFromJson {
     }
 
     /**
-     *
-     * @param id index of array
+     * @param id            index of array
      * @param medicalRecord Body request
      * @return updated Medical Record
      */
-    public MedicalRecord update(Long id, MedicalRecord medicalRecord)  {
+    public MedicalRecord update(Long id, MedicalRecord medicalRecord) {
         JSONObject recordObj = (JSONObject) medicalRecordArray.get(Math.toIntExact(id));
         MedicalRecord newMedicalRecord = new MedicalRecord(
                 // Extract and convert properties from recordObj to corresponding MedicalRecord fields.

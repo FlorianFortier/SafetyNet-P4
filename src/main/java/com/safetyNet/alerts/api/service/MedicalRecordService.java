@@ -17,7 +17,6 @@ public class MedicalRecordService {
     private final MedicalRecordRepository medicalRecordRepository;
 
     /**
-     *
      * @param medicalRecordRepository Constructor
      */
     public MedicalRecordService(MedicalRecordRepository medicalRecordRepository) {
@@ -25,7 +24,6 @@ public class MedicalRecordService {
     }
 
     /**
-     *
      * @param id index of array
      * @return A single medical record
      * @throws ParseException
@@ -36,7 +34,6 @@ public class MedicalRecordService {
     }
 
     /**
-     *
      * @return All Medical Records
      * @throws ParseException in case of JSON parsing exeption
      */
@@ -46,8 +43,7 @@ public class MedicalRecordService {
     }
 
     /**
-     *
-     * @param lastName lastName is a filter used as identifier
+     * @param lastName  lastName is a filter used as identifier
      * @param firstName firtName is a filter used as identifier
      */
     public void deleteMedicalRecord(final String lastName, String firstName) {
@@ -63,7 +59,6 @@ public class MedicalRecordService {
     }
 
     /**
-     *
      * @param medicalRecord Request Body
      * @return newly created Medical record
      */
@@ -72,24 +67,23 @@ public class MedicalRecordService {
     }
 
     /**
-     *
-     * @param id index of array
+     * @param id            index of array
      * @param medicalRecord Request Body
      * @return updated Medical Record
      * @throws ParseException In case of errors with parsing JSON
      */
-    public MedicalRecord putMedicalRecord(@PathVariable long id,MedicalRecord medicalRecord) throws ParseException {
-         Optional<MedicalRecord> getterResponse = medicalRecordRepository.findById(id);
-            MedicalRecord updatedRecord = medicalRecordRepository.update(id, medicalRecord);
-            MedicalRecord recordObj = getterResponse.get();
+    public MedicalRecord putMedicalRecord(@PathVariable long id, MedicalRecord medicalRecord) throws ParseException {
+        Optional<MedicalRecord> getterResponse = medicalRecordRepository.findById(id);
+        MedicalRecord updatedRecord = medicalRecordRepository.update(id, medicalRecord);
+        MedicalRecord recordObj = getterResponse.get();
 
-            recordObj.setFirstName(updatedRecord.getFirstName());
-            recordObj.setLastName(updatedRecord.getLastName());
-            recordObj.setBirthdate(updatedRecord.getBirthdate());
-            recordObj.setMedications(updatedRecord.getMedications());
-            recordObj.setAllergies(updatedRecord.getAllergies());
+        recordObj.setFirstName(updatedRecord.getFirstName());
+        recordObj.setLastName(updatedRecord.getLastName());
+        recordObj.setBirthdate(updatedRecord.getBirthdate());
+        recordObj.setMedications(updatedRecord.getMedications());
+        recordObj.setAllergies(updatedRecord.getAllergies());
 
 
-            return recordObj;
+        return recordObj;
     }
 }
