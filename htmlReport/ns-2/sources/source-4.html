@@ -1,0 +1,250 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PersonController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.safetyNet.alerts.api.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: PersonController (com.safetyNet.alerts.api.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PersonController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91,7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90,5%
+  </span>
+  <span class="absValue">
+    (19/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.safetyNet.alerts.api.controller;
+&nbsp;
+&nbsp;import com.safetyNet.alerts.api.entity.Person;
+&nbsp;import com.safetyNet.alerts.api.service.PersonService;
+&nbsp;import org.json.simple.JSONArray;
+&nbsp;import org.json.simple.parser.ParseException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class PersonController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PersonService personService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the list of all persons.
+&nbsp;     *
+&nbsp;     * @return List of all persons
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/Persons&quot;)
+&nbsp;    public Iterable&lt;Person&gt; getPersons() {
+<b class="fc">&nbsp;        return personService.getPersons();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a person by their identifier.
+&nbsp;     *
+&nbsp;     * @param id Person&#39;s identifier
+&nbsp;     * @return ResponseEntity with the person or a HttpStatus.NOT_FOUND code
+&nbsp;     * @throws ParseException in case of parsing error
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/Person&quot;)
+&nbsp;    public ResponseEntity&lt;Person&gt; getPerson(@RequestParam Long id) throws ParseException {
+<b class="fc">&nbsp;        Optional&lt;Person&gt; personOptional = personService.getPerson(id);</b>
+<b class="fc">&nbsp;        return personOptional.map(person -&gt; new ResponseEntity&lt;&gt;(person, HttpStatus.OK))</b>
+<b class="fc">&nbsp;                .orElseGet(() -&gt; new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a list of children at a given address.
+&nbsp;     *
+&nbsp;     * @param address Address for which we want to retrieve the list of children
+&nbsp;     * @return JSONArray containing children&#39;s information
+&nbsp;     * @throws ParseException in case of parsing error
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/childAlert&quot;)
+&nbsp;    public JSONArray childByAddress(@RequestParam String address) throws ParseException {
+<b class="fc">&nbsp;        return personService.childByAddress(address);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a list of phone numbers for a given fire station.
+&nbsp;     *
+&nbsp;     * @param firestation Fire station number for which we want to retrieve phone numbers
+&nbsp;     * @return JSONArray containing phone numbers
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/phoneAlert&quot;)
+&nbsp;    public JSONArray phoneAlertByStation(@RequestParam String firestation) {
+<b class="fc">&nbsp;        return personService.phoneAlertByStation(firestation);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a person&#39;s information by their first name and last name.
+&nbsp;     *
+&nbsp;     * @param firstName First name of the person
+&nbsp;     * @param lastName  Last name of the person
+&nbsp;     * @return JSONArray containing the person&#39;s information
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/personInfo&quot;)
+&nbsp;    public JSONArray personInfo(@RequestParam String firstName, String lastName) {
+<b class="fc">&nbsp;        return personService.personInfo(firstName, lastName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a list of persons affected by a fire at a given address.
+&nbsp;     *
+&nbsp;     * @param address Address of the fire
+&nbsp;     * @return JSONArray containing information of persons affected by the fire
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/fire&quot;)
+&nbsp;    public JSONArray fire(@RequestParam String address) {
+<b class="fc">&nbsp;        return personService.fire(address);</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * retrieve a list of unique email addresses for residents of a specific city.
+&nbsp;     *
+&nbsp;     * @param city The city for which to retrieve the email addresses.
+&nbsp;     * @return A JSONArray conta²ining a single JSONObject with a &quot;mails&quot; field, which is a set of unique email addresses.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/communityEmail&quot;)
+&nbsp;    public JSONArray communityEmail(@RequestParam String city) {
+&nbsp;        // Delegate the request to the corresponding service method to handle the business logic.
+<b class="fc">&nbsp;        return personService.communityEmail(city);</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * Create a new person.
+&nbsp;     *
+&nbsp;     * @param person Request Body containing the information of the person to create
+&nbsp;     * @return ResponseEntity with the new person or a HttpStatus.NOT_FOUND code
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/Person&quot;)
+&nbsp;    @ResponseBody
+&nbsp;    public ResponseEntity&lt;Person&gt; postMedicalRecord(@RequestBody Person person) {
+<b class="fc">&nbsp;        Optional&lt;Person&gt; personRecordOptional = personService.postPersonRecord(person);</b>
+<b class="fc">&nbsp;        return personRecordOptional.map(personRecordToPost</b>
+<b class="fc">&nbsp;                -&gt; new ResponseEntity&lt;&gt;(person, HttpStatus.OK)).orElseGet(()</b>
+<b class="nc">&nbsp;                -&gt; new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update the information of an existing person.
+&nbsp;     *
+&nbsp;     * @param person Request Body containing the new information of the person
+&nbsp;     * @param id     Identifier of the person to update
+&nbsp;     * @return ResponseEntity with the updated person or a HttpStatus.NOT_FOUND code
+&nbsp;     * @throws ParseException in case of parsing error
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/Person/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Person&gt; putPersonRecord(@RequestBody Person person, @PathVariable Long id) throws ParseException {
+<b class="fc">&nbsp;        Person updatedRecord = personService.putPersonRecord(id, person);</b>
+<b class="fc">&nbsp;        if (updatedRecord != null) {</b>
+<b class="fc">&nbsp;            personService.savePerson(person);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(updatedRecord);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a person by their last name and first name.
+&nbsp;     *
+&nbsp;     * @param lastName  Last name of the person to delete
+&nbsp;     * @param firstName First name of the person to delete
+&nbsp;     * @return ResponseEntity with a HttpStatus.OK code
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/Person&quot;)
+&nbsp;    @ResponseBody
+&nbsp;    public ResponseEntity&lt;Person&gt; deletePersonRecord(@RequestParam String lastName, String firstName) {
+<b class="fc">&nbsp;        personService.deletePerson(lastName, firstName);</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-09-15 10:40</div>
+</div>
+</body>
+</html>

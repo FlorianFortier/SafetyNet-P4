@@ -1,0 +1,440 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PersonRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.safetyNet.alerts.api.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: PersonRepository (com.safetyNet.alerts.api.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PersonRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (173/173)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.safetyNet.alerts.api.repository;
+&nbsp;
+&nbsp;import com.safetyNet.alerts.api.entity.Person;
+&nbsp;import com.safetyNet.alerts.api.util.ReadDataFromJson;
+&nbsp;import org.json.simple.JSONArray;
+&nbsp;import org.json.simple.JSONObject;
+&nbsp;import org.json.simple.parser.ParseException;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;import static com.safetyNet.alerts.api.repository.FirestationRepository.calculateAge;
+&nbsp;import static com.safetyNet.alerts.api.repository.FirestationRepository.findMatchingMedicalRecord;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository class for managing Person data.
+&nbsp; */
+&nbsp;@Repository
+&nbsp;public class PersonRepository extends ReadDataFromJson {
+&nbsp;
+<b class="fc">&nbsp;    private final JSONObject personJSON = readJsonFile(&quot;D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json&quot;);</b>
+<b class="fc">&nbsp;    Logger logger = LoggerFactory.getLogger(PersonRepository.class);</b>
+<b class="fc">&nbsp;    JSONArray personArray = (JSONArray) personJSON.get(&quot;persons&quot;);</b>
+<b class="fc">&nbsp;    JSONArray medicalRecords = (JSONArray) personJSON.get(&quot;medicalrecords&quot;);</b>
+<b class="fc">&nbsp;    JSONArray firestations = (JSONArray) personJSON.get(&quot;firestations&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for PersonRepository.
+&nbsp;     *
+&nbsp;     * @throws ParseException - If the JSON file is not found
+&nbsp;     */
+<b class="fc">&nbsp;    public PersonRepository() throws ParseException {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find a Person by their ID.
+&nbsp;     *
+&nbsp;     * @param id The index of the Person in the JSON array.
+&nbsp;     * @return An Optional object containing the found Person, or empty if not found.
+&nbsp;     */
+&nbsp;    public Optional&lt;Person&gt; findById(Long id) {
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));</b>
+<b class="fc">&nbsp;        Person person = new Person(</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;firstName&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;lastName&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;address&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;city&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;zip&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;phone&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;email&quot;)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        logger.info(&quot;Person retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return Optional.of(person);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find children by address and include their relatives.
+&nbsp;     *
+&nbsp;     * @param address The address to search for.
+&nbsp;     * @return A JSONArray containing children and their relatives.
+&nbsp;     */
+&nbsp;    public JSONArray childByAddress(String address) {
+<b class="fc">&nbsp;        JSONArray childByAddressWithRelatives = new JSONArray();</b>
+<b class="fc">&nbsp;        JSONArray relatives = new JSONArray();</b>
+<b class="fc">&nbsp;        Set&lt;LinkedHashMap&lt;String, Object&gt;&gt; relativesSet = new HashSet&lt;&gt;(); // Using set to get rid of duplications</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object personObj : personArray) {</b>
+<b class="fc">&nbsp;            JSONObject personJson = (JSONObject) personObj;</b>
+<b class="fc">&nbsp;            String personAddress = (String) personJson.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (personAddress.equals(address)) {</b>
+<b class="fc">&nbsp;                String personFirstName = (String) personJson.get(&quot;firstName&quot;);</b>
+<b class="fc">&nbsp;                String personLastName = (String) personJson.get(&quot;lastName&quot;);</b>
+<b class="fc">&nbsp;                JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);</b>
+&nbsp;
+<b class="fc">&nbsp;                if (matchingMedicalRecord != null) {</b>
+<b class="fc">&nbsp;                    String birthdate = (String) matchingMedicalRecord.get(&quot;birthdate&quot;);</b>
+<b class="fc">&nbsp;                    int age = calculateAge(birthdate);</b>
+<b class="fc">&nbsp;                    if (age &lt;= 18) {</b>
+<b class="fc">&nbsp;                        LinkedHashMap&lt;String, Object&gt; personData = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;                        personData.put(&quot;firstName&quot;, personFirstName);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;lastName&quot;, personLastName);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;address&quot;, personAddress);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;age&quot;, age);</b>
+&nbsp;
+<b class="fc">&nbsp;                        childByAddressWithRelatives.add(personData); // Add person to Set to eliminate duplication</b>
+<b class="fc">&nbsp;                    } else if (!childByAddressWithRelatives.isEmpty()) {</b>
+<b class="fc">&nbsp;                        LinkedHashMap&lt;String, Object&gt; personData = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;                        personData.put(&quot;firstName&quot;, personFirstName);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;lastName&quot;, personLastName);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;address&quot;, personAddress);</b>
+<b class="fc">&nbsp;                        personData.put(&quot;city&quot;, personJson.get(&quot;city&quot;));</b>
+<b class="fc">&nbsp;                        personData.put(&quot;zip&quot;, personJson.get(&quot;zip&quot;));</b>
+<b class="fc">&nbsp;                        personData.put(&quot;phone&quot;, personJson.get(&quot;phone&quot;));</b>
+<b class="fc">&nbsp;                        personData.put(&quot;email&quot;, personJson.get(&quot;email&quot;));</b>
+<b class="fc">&nbsp;                        personData.put(&quot;age&quot;, age);</b>
+<b class="fc">&nbsp;                        relativesSet.add(personData);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        if (!relativesSet.isEmpty()) {</b>
+&nbsp;            // Creates an object to hold &quot;Set&quot; of relatives
+<b class="fc">&nbsp;            JSONObject relativesObject = new JSONObject();</b>
+<b class="fc">&nbsp;            relativesObject.put(&quot;relatives&quot;, relativesSet);</b>
+&nbsp;
+&nbsp;            // Adds object &quot;relativesObject&quot; to &quot;childByAddressWithRelatives&quot;
+<b class="fc">&nbsp;            childByAddressWithRelatives.add(relativesObject);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        logger.info(&quot;Children with relatives retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return childByAddressWithRelatives;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve all Persons from the JSON file.
+&nbsp;     *
+&nbsp;     * @return An Iterable object of Persons.
+&nbsp;     */
+&nbsp;    public Iterable&lt;Person&gt; findAll() {
+<b class="fc">&nbsp;        List&lt;Person&gt; PersonList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (Object o : personArray) {</b>
+<b class="fc">&nbsp;            JSONObject recordObj = (JSONObject) o;</b>
+<b class="fc">&nbsp;            Person person = new Person(</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;firstName&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;lastName&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;address&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;city&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;zip&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;phone&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;email&quot;)</b>
+&nbsp;            );
+<b class="fc">&nbsp;            PersonList.add(person);</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        logger.info(&quot;List of Persons retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return PersonList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve detailed information about a person by their first name and last name.
+&nbsp;     *
+&nbsp;     * @param firstName The first name of the person.
+&nbsp;     * @param lastName  The last name of the person.
+&nbsp;     * @return A JSONObject containing detailed information about the person.
+&nbsp;     */
+&nbsp;    public JSONArray personInfo(String firstName, String lastName) {
+<b class="fc">&nbsp;        JSONArray returnPersonArray = new JSONArray();</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;JSONObject&gt; personOptional = personArray.stream()</b>
+<b class="fc">&nbsp;                .filter(person -&gt; ((JSONObject) person).get(&quot;firstName&quot;).equals(firstName) &amp;&amp;</b>
+<b class="fc">&nbsp;                        ((JSONObject) person).get(&quot;lastName&quot;).equals(lastName))</b>
+<b class="fc">&nbsp;                .findFirst();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (personOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            JSONObject personJson = personOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            Optional&lt;JSONObject&gt; medicalRecordOptional = medicalRecords.stream()</b>
+<b class="fc">&nbsp;                    .filter(medicalRecord -&gt; ((JSONObject) medicalRecord).get(&quot;firstName&quot;).equals(firstName) &amp;&amp;</b>
+<b class="fc">&nbsp;                            ((JSONObject) medicalRecord).get(&quot;lastName&quot;).equals(lastName))</b>
+<b class="fc">&nbsp;                    .findFirst();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (medicalRecordOptional.isPresent()) {</b>
+<b class="fc">&nbsp;                JSONObject medicalRecordJson = medicalRecordOptional.get();</b>
+<b class="fc">&nbsp;                JSONArray allergies = (JSONArray) medicalRecordJson.get(&quot;allergies&quot;);</b>
+<b class="fc">&nbsp;                JSONArray medications = (JSONArray) medicalRecordJson.get(&quot;medications&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                int age = calculateAge((String) medicalRecordJson.get(&quot;birthdate&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;                personJson.put(&quot;age&quot;, age);</b>
+<b class="fc">&nbsp;                personJson.put(&quot;allergies&quot;, allergies);</b>
+<b class="fc">&nbsp;                personJson.put(&quot;medications&quot;, medications);</b>
+&nbsp;
+<b class="fc">&nbsp;                returnPersonArray.add(personJson);</b>
+<b class="fc">&nbsp;                logger.info(&quot;Person retrieved successfully&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return returnPersonArray;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve phone numbers of individuals served by a fire station.
+&nbsp;     *
+&nbsp;     * @param firestationNumber The number of the fire station.
+&nbsp;     * @return A JSONArray containing phone numbers of individuals served by the fire station.
+&nbsp;     */
+&nbsp;    public JSONArray phoneAlertByStation(String firestationNumber) {
+<b class="fc">&nbsp;        JSONArray phonesNumbersList = new JSONArray();</b>
+<b class="fc">&nbsp;        for (Object firestationObj : firestations) {</b>
+<b class="fc">&nbsp;            JSONObject firestation = (JSONObject) firestationObj;</b>
+<b class="fc">&nbsp;            if (firestation.get(&quot;station&quot;).equals(firestationNumber)) {</b>
+<b class="fc">&nbsp;                String firestationAddress = (String) firestation.get(&quot;address&quot;);</b>
+<b class="fc">&nbsp;                for (Object personObj : personArray) {</b>
+<b class="fc">&nbsp;                    JSONObject personJson = (JSONObject) personObj;</b>
+<b class="fc">&nbsp;                    String personAddress = (String) personJson.get(&quot;address&quot;);</b>
+<b class="fc">&nbsp;                    if (personAddress.equals(firestationAddress)) {</b>
+<b class="fc">&nbsp;                        String personPhone = (String) personJson.get(&quot;phone&quot;);</b>
+<b class="fc">&nbsp;                        phonesNumbersList.add(personPhone);</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        logger.info(&quot;List of phone numbers retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return phonesNumbersList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve a list of residents at a given address who may require assistance in case of fire.
+&nbsp;     *
+&nbsp;     * @param address The address to search for.
+&nbsp;     * @return A JSONArray containing information about residents at the address.
+&nbsp;     */
+&nbsp;    public JSONArray fire(String address) {
+<b class="fc">&nbsp;          JSONArray residentList = new JSONArray();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object firestationObj : firestations) {</b>
+<b class="fc">&nbsp;            JSONObject firestation = (JSONObject) firestationObj;</b>
+<b class="fc">&nbsp;            if (firestation.get(&quot;address&quot;).equals(address)) {</b>
+<b class="fc">&nbsp;                for (Object personJson : personArray) {</b>
+<b class="fc">&nbsp;                    JSONObject personObj = (JSONObject) personJson;</b>
+<b class="fc">&nbsp;                    String personAddress = (String) personObj.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                    if (personAddress.equals(address)) {</b>
+<b class="fc">&nbsp;                        String personLastName = (String) personObj.get(&quot;lastName&quot;);</b>
+<b class="fc">&nbsp;                        String personFirstName = (String) personObj.get(&quot;firstName&quot;);</b>
+<b class="fc">&nbsp;                        String personPhone = (String) personObj.get(&quot;phone&quot;);</b>
+<b class="fc">&nbsp;                        JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);</b>
+&nbsp;
+<b class="fc">&nbsp;                        if (matchingMedicalRecord != null) {</b>
+<b class="fc">&nbsp;                            String birthdate = (String) matchingMedicalRecord.get(&quot;birthdate&quot;);</b>
+<b class="fc">&nbsp;                            int age = calculateAge(birthdate);</b>
+&nbsp;
+<b class="fc">&nbsp;                            JSONObject resident = new JSONObject();</b>
+<b class="fc">&nbsp;                            resident.put(&quot;firstName&quot;, personFirstName);</b>
+<b class="fc">&nbsp;                            resident.put(&quot;lastName&quot;, personLastName);</b>
+<b class="fc">&nbsp;                            resident.put(&quot;phone&quot;, personPhone);</b>
+<b class="fc">&nbsp;                            resident.put(&quot;age&quot;, age);</b>
+<b class="fc">&nbsp;                            resident.put(&quot;allergies&quot;, matchingMedicalRecord.get(&quot;allergies&quot;));</b>
+<b class="fc">&nbsp;                            resident.put(&quot;medications&quot;, matchingMedicalRecord.get(&quot;medications&quot;));</b>
+<b class="fc">&nbsp;                            resident.put(&quot;stationNumber&quot;, firestation.get(&quot;station&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;                            residentList.add(resident);</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        logger.info(&quot;List of residents retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return residentList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a list of unique email addresses for residents of a specific city.
+&nbsp;     *
+&nbsp;     * @param city The city for which to retrieve the email addresses.
+&nbsp;     * @return A JSONArray containing a single JSONObject with a &quot;mails&quot; field, which is a set of unique email addresses.
+&nbsp;     */
+&nbsp;    public JSONArray communityEmail(String city) {
+<b class="fc">&nbsp;        JSONArray mailList = new JSONArray(); // Initialize a JSONArray to store the result.</b>
+<b class="fc">&nbsp;        JSONObject mailObj = new JSONObject(); // Initialize a JSONObject to store the email addresses.</b>
+<b class="fc">&nbsp;        Set&lt;Object&gt; mails = new HashSet&lt;&gt;(); // Use a Set to prevent duplicates of email addresses.</b>
+&nbsp;
+&nbsp;        // Iterate through the personArray to find residents of the specified city.
+<b class="fc">&nbsp;        for (Object personJson : personArray) {</b>
+<b class="fc">&nbsp;            JSONObject personObj = (JSONObject) personJson;</b>
+&nbsp;
+&nbsp;            // Check if the person&#39;s city matches the specified city.
+<b class="fc">&nbsp;            if (personObj.get(&quot;city&quot;).equals(city)) {</b>
+<b class="fc">&nbsp;                mails.add(personObj.get(&quot;email&quot;)); // Add the email address to the set.</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        mailObj.put(&quot;mails&quot;, mails); // Create a JSONObject with the unique email addresses.</b>
+<b class="fc">&nbsp;        mailList.add(mailObj); // Add the JSONObject to the JSONArray.</b>
+&nbsp;
+<b class="fc">&nbsp;        return mailList; // Return the list of unique email addresses for the specified city.</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a Person by their last name and first name.
+&nbsp;     *
+&nbsp;     * @param lastName  The last name of the Person.
+&nbsp;     * @param firstName The first name of the Person.
+&nbsp;     */
+&nbsp;    public void deleteById(String lastName, String firstName) {
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) personArray.stream()</b>
+<b class="fc">&nbsp;                .filter(person -&gt; ((JSONObject) person).get(&quot;lastName&quot;).equals(lastName) &amp;&amp;</b>
+<b class="fc">&nbsp;                        ((JSONObject) person).get(&quot;firstName&quot;).equals(firstName)).findFirst().get();</b>
+<b class="fc">&nbsp;        personArray.remove(recordObj);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Person deleted successfully&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Save a new Person.
+&nbsp;     *
+&nbsp;     * @param person The Person to be saved.
+&nbsp;     * @return The saved Person.
+&nbsp;     */
+&nbsp;    public Person save(Person person) {
+<b class="fc">&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;firstName&quot;, person.getFirstName());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;lastName&quot;, person.getLastName());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;address&quot;, person.getAddress());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;city&quot;, person.getCity());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;zip&quot;, person.getZip());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;phone&quot;, person.getPhone());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;email&quot;, person.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;        logger.info(&quot;Person saved successfully&quot;);</b>
+<b class="fc">&nbsp;        return person;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update an existing Person.
+&nbsp;     *
+&nbsp;     * @param id     The index of the Person in the JSON array.
+&nbsp;     * @param person The updated Person data.
+&nbsp;     * @return The updated Person object.
+&nbsp;     */
+&nbsp;    public Person update(Long id, Person person) {
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) personArray.get(Math.toIntExact(id));</b>
+<b class="fc">&nbsp;        Person newPerson = new Person(</b>
+<b class="fc">&nbsp;                person.getFirstName(),</b>
+<b class="fc">&nbsp;                person.getLastName(),</b>
+<b class="fc">&nbsp;                person.getAddress(),</b>
+<b class="fc">&nbsp;                person.getCity(),</b>
+<b class="fc">&nbsp;                person.getZip(),</b>
+<b class="fc">&nbsp;                person.getPhone(),</b>
+<b class="fc">&nbsp;                person.getEmail()</b>
+&nbsp;        );
+<b class="fc">&nbsp;        logger.info(&quot;Person updated successfully&quot;);</b>
+<b class="fc">&nbsp;        save(person);</b>
+<b class="fc">&nbsp;        return newPerson;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-09-15 10:40</div>
+</div>
+</body>
+</html>

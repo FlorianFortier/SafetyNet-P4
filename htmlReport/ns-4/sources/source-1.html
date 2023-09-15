@@ -1,0 +1,381 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > FirestationRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.safetyNet.alerts.api.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: FirestationRepository (com.safetyNet.alerts.api.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FirestationRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96%
+  </span>
+  <span class="absValue">
+    (121/126)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.safetyNet.alerts.api.repository;
+&nbsp;
+&nbsp;import com.safetyNet.alerts.api.entity.Firestation;
+&nbsp;import com.safetyNet.alerts.api.entity.Person;
+&nbsp;import com.safetyNet.alerts.api.util.ReadDataFromJson;
+&nbsp;import org.json.simple.JSONArray;
+&nbsp;import org.json.simple.JSONObject;
+&nbsp;import org.json.simple.parser.ParseException;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.Period;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository for managing Firestation data.
+&nbsp; */
+&nbsp;@Repository
+&nbsp;public class FirestationRepository extends ReadDataFromJson {
+<b class="fc">&nbsp;    private final JSONObject firestationRecordJSON = readJsonFile(&quot;D:\\Dev\\SafetyNet-P4\\src\\main\\resources\\dataSafetyNet.json&quot;);</b>
+<b class="fc">&nbsp;    static Logger logger = LoggerFactory.getLogger(FirestationRepository.class);</b>
+<b class="fc">&nbsp;    JSONArray firestationRecordArray = (JSONArray) firestationRecordJSON.get(&quot;firestations&quot;);</b>
+<b class="fc">&nbsp;    JSONArray persons = (JSONArray) firestationRecordJSON.get(&quot;persons&quot;);</b>
+<b class="fc">&nbsp;    JSONArray medicalRecords = (JSONArray) firestationRecordJSON.get(&quot;medicalrecords&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor.
+&nbsp;     *
+&nbsp;     * @throws ParseException If there is an error parsing JSON data.
+&nbsp;     */
+<b class="fc">&nbsp;    public FirestationRepository() throws ParseException {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find a Firestation by its ID (array index).
+&nbsp;     *
+&nbsp;     * @param id The array index.
+&nbsp;     * @return An optional containing the Firestation if found.
+&nbsp;     */
+&nbsp;    public Optional&lt;Firestation&gt; findById(Long id) {
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) firestationRecordArray.get(Math.toIntExact(id));</b>
+<b class="fc">&nbsp;        Firestation firestation = new Firestation(</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;address&quot;),</b>
+<b class="fc">&nbsp;                (String) recordObj.get(&quot;station&quot;)</b>
+&nbsp;        );
+<b class="fc">&nbsp;        logger.info(&quot;Firestation retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        return Optional.of(firestation);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve all Firestations from the JSON file.
+&nbsp;     *
+&nbsp;     * @return A list of Firestations.
+&nbsp;     */
+&nbsp;    public Iterable&lt;Firestation&gt; findAll() {
+<b class="fc">&nbsp;        List&lt;Firestation&gt; firestationRecordList = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object o : firestationRecordArray) {</b>
+<b class="fc">&nbsp;            JSONObject recordObj = (JSONObject) o;</b>
+<b class="fc">&nbsp;            Firestation firestation = new Firestation(</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;address&quot;),</b>
+<b class="fc">&nbsp;                    (String) recordObj.get(&quot;station&quot;)</b>
+&nbsp;            );
+<b class="fc">&nbsp;            firestationRecordList.add(firestation);</b>
+<b class="fc">&nbsp;            logger.info(&quot;Firestation retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return firestationRecordList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve persons related to a fire station and count adults and children.
+&nbsp;     *
+&nbsp;     * @param stationNumber The station number.
+&nbsp;     * @return A JSON array containing persons and count information.
+&nbsp;     */
+&nbsp;    public JSONArray personByStation(String stationNumber) {
+&nbsp;
+<b class="fc">&nbsp;        JSONArray personRelatedToStationRecordList = new JSONArray();</b>
+<b class="fc">&nbsp;        int nbChild = 0;</b>
+<b class="fc">&nbsp;        int nbAdult = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object firestationObj : firestationRecordArray) {</b>
+<b class="fc">&nbsp;            JSONObject firestation = (JSONObject) firestationObj;</b>
+<b class="fc">&nbsp;            if (firestation.get(&quot;station&quot;).equals(stationNumber)) {</b>
+<b class="fc">&nbsp;                String firestationAddress = (String) firestation.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                for (Object personObj : persons) {</b>
+<b class="fc">&nbsp;                    JSONObject personJson = (JSONObject) personObj;</b>
+<b class="fc">&nbsp;                    String personAddress = (String) personJson.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                    if (personAddress.equals(firestationAddress)) {</b>
+<b class="fc">&nbsp;                        String personFirstName = (String) personJson.get(&quot;firstName&quot;);</b>
+<b class="fc">&nbsp;                        String personLastName = (String) personJson.get(&quot;lastName&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                        JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);</b>
+<b class="fc">&nbsp;                        if (matchingMedicalRecord != null) {</b>
+<b class="fc">&nbsp;                            String birthdate = (String) matchingMedicalRecord.get(&quot;birthdate&quot;);</b>
+<b class="fc">&nbsp;                            int age = calculateAge(birthdate);</b>
+&nbsp;
+<b class="fc">&nbsp;                            if (age &lt; 18) {</b>
+<b class="fc">&nbsp;                                nbChild++;</b>
+&nbsp;                            } else {
+<b class="fc">&nbsp;                                nbAdult++;</b>
+&nbsp;                            }
+<b class="fc">&nbsp;                            LinkedHashMap&lt;String, Object&gt; personData = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;                            personData.put(&quot;firstName&quot;, personFirstName);</b>
+<b class="fc">&nbsp;                            personData.put(&quot;lastName&quot;, personLastName);</b>
+<b class="fc">&nbsp;                            personData.put(&quot;address&quot;, personAddress);</b>
+<b class="fc">&nbsp;                            personData.put(&quot;phone&quot;, personJson.get(&quot;phone&quot;));</b>
+<b class="fc">&nbsp;                            personData.put(&quot;age&quot;, age);</b>
+&nbsp;
+<b class="fc">&nbsp;                            personRelatedToStationRecordList.add(personData);</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;        // Add count information to the JSON array
+<b class="fc">&nbsp;        personRelatedToStationRecordList.add(&quot;Number of childs = &quot; + nbChild);</b>
+<b class="fc">&nbsp;        personRelatedToStationRecordList.add(&quot;Number of adults = &quot; + nbAdult);</b>
+<b class="fc">&nbsp;        logger.info(&quot;PersonByStation records retrieved successfully&quot;);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Number of Adults: &quot; + nbAdult);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Number of Children: &quot; + nbChild);</b>
+<b class="fc">&nbsp;        return (JSONArray) personRelatedToStationRecordList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve persons related to multiple fire stations.
+&nbsp;     *
+&nbsp;     * @param stationsNumber The list of station numbers.
+&nbsp;     * @return A JSON array containing information about persons related to each station.
+&nbsp;     */
+&nbsp;    public JSONArray floodByStation(List&lt;String&gt; stationsNumber) {
+&nbsp;
+<b class="fc">&nbsp;        JSONArray result = new JSONArray();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (String stationNumber : stationsNumber) {</b>
+<b class="fc">&nbsp;            JSONObject stationData = new JSONObject();</b>
+<b class="fc">&nbsp;            stationData.put(&quot;stationNumber&quot;, stationNumber);</b>
+&nbsp;
+<b class="fc">&nbsp;            JSONArray personList = new JSONArray();</b>
+&nbsp;
+<b class="fc">&nbsp;            for (Object firestationObj : firestationRecordArray) {</b>
+<b class="fc">&nbsp;                JSONObject firestation = (JSONObject) firestationObj;</b>
+<b class="fc">&nbsp;                if (firestation.get(&quot;station&quot;).equals(stationNumber)) {</b>
+<b class="fc">&nbsp;                    String firestationAddress = (String) firestation.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                    for (Object personObj : persons) {</b>
+<b class="fc">&nbsp;                        JSONObject personJson = (JSONObject) personObj;</b>
+<b class="fc">&nbsp;                        String personAddress = (String) personJson.get(&quot;address&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                        if (personAddress.equals(firestationAddress)) {</b>
+<b class="fc">&nbsp;                            String personLastName = (String) personJson.get(&quot;lastName&quot;);</b>
+<b class="fc">&nbsp;                            String personFirstName = (String) personJson.get(&quot;firstName&quot;);</b>
+<b class="fc">&nbsp;                            String personPhone = (String) personJson.get(&quot;phone&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;                            JSONObject matchingMedicalRecord = findMatchingMedicalRecord(personFirstName, personLastName, medicalRecords);</b>
+&nbsp;
+<b class="fc">&nbsp;                            if (matchingMedicalRecord != null) {</b>
+<b class="fc">&nbsp;                                String birthdate = (String) matchingMedicalRecord.get(&quot;birthdate&quot;);</b>
+<b class="fc">&nbsp;                                int age = calculateAge(birthdate);</b>
+&nbsp;
+&nbsp;                                // Création d&#39;un LinkedHashMap pour stocker les informations dans l&#39;ordre souhaité
+<b class="fc">&nbsp;                                LinkedHashMap&lt;String, Object&gt; personData = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;                                personData.put(&quot;allergies&quot;, matchingMedicalRecord.get(&quot;allergies&quot;));</b>
+<b class="fc">&nbsp;                                personData.put(&quot;firstName&quot;, personFirstName);</b>
+<b class="fc">&nbsp;                                personData.put(&quot;lastName&quot;, personLastName);</b>
+<b class="fc">&nbsp;                                personData.put(&quot;address&quot;, personJson.get(&quot;address&quot;));</b>
+<b class="fc">&nbsp;                                personData.put(&quot;phone&quot;, personPhone);</b>
+<b class="fc">&nbsp;                                personData.put(&quot;medications&quot;, matchingMedicalRecord.get(&quot;medications&quot;));</b>
+<b class="fc">&nbsp;                                personData.put(&quot;age&quot;, age);</b>
+&nbsp;
+<b class="fc">&nbsp;                                personList.add(personData);</b>
+&nbsp;                            }
+&nbsp;                        }
+<b class="fc">&nbsp;                    }</b>
+&nbsp;                }
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            result.add(stationData);</b>
+<b class="fc">&nbsp;            stationData.put(&quot;personList&quot;, personList);</b>
+<b class="fc">&nbsp;            logger.info(&quot; List of person by station retrieve successfully&quot;);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Find a matching medical record for a person.
+&nbsp;     *
+&nbsp;     * @param firstName      The person&#39;s first name.
+&nbsp;     * @param lastName       The person&#39;s last name.
+&nbsp;     * @param medicalRecords The list of medical records.
+&nbsp;     * @return The matching medical record if found, or null if not found.
+&nbsp;     */
+&nbsp;    public static JSONObject findMatchingMedicalRecord(String firstName, String lastName, JSONArray medicalRecords) {
+<b class="fc">&nbsp;        for (Object medicalRecordObj : medicalRecords) {</b>
+<b class="fc">&nbsp;            JSONObject medicalRecord = (JSONObject) medicalRecordObj;</b>
+<b class="fc">&nbsp;            if (medicalRecord.get(&quot;firstName&quot;).equals(firstName) &amp;&amp; medicalRecord.get(&quot;lastName&quot;).equals(lastName)) {</b>
+<b class="fc">&nbsp;                return medicalRecord;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculate age based on birthdate.
+&nbsp;     *
+&nbsp;     * @param birthdate The birthdate string.
+&nbsp;     * @return The calculated age.
+&nbsp;     */
+&nbsp;    public static int calculateAge(String birthdate) {
+&nbsp;        try {
+<b class="fc">&nbsp;            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</b>
+<b class="fc">&nbsp;            LocalDate birthDate = LocalDate.parse(birthdate, formatter);</b>
+<b class="fc">&nbsp;            LocalDate currentDate = LocalDate.now();</b>
+<b class="fc">&nbsp;            Period period = Period.between(birthDate, currentDate);</b>
+<b class="fc">&nbsp;            return period.getYears();</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            logger.error(&quot;Erreur de parse sur la date&quot;);</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a Firestation by address and station number.
+&nbsp;     *
+&nbsp;     * @param address The address to delete.
+&nbsp;     * @param station The station number to delete.
+&nbsp;     */
+&nbsp;    public void deleteById(String address, String station) {
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) firestationRecordArray.stream()</b>
+<b class="fc">&nbsp;                .filter(firestation -&gt; ((JSONObject) firestation).get(&quot;address&quot;).equals(address) &amp;&amp;</b>
+<b class="fc">&nbsp;                        ((JSONObject) firestation).get(&quot;station&quot;).equals(station)).findFirst().get();</b>
+<b class="fc">&nbsp;        firestationRecordArray.remove(recordObj);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Firestation deleted successfully&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Save a Firestation.
+&nbsp;     *
+&nbsp;     * @param firestation The Firestation to save.
+&nbsp;     * @return The saved Firestation.
+&nbsp;     */
+&nbsp;    public Firestation save(Firestation firestation) {
+<b class="fc">&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;address&quot;, firestation.getAddress());</b>
+<b class="fc">&nbsp;        jsonObject.put(&quot;station&quot;, firestation.getStation());</b>
+<b class="fc">&nbsp;        logger.info(&quot;Firestation saved successfully&quot;);</b>
+<b class="fc">&nbsp;        return firestation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update a Firestation by ID (array index).
+&nbsp;     *
+&nbsp;     * @param id          The ID (array index) of the Firestation to update.
+&nbsp;     * @param firestation The updated Firestation data.
+&nbsp;     * @return The updated Firestation.
+&nbsp;     */
+&nbsp;    public Firestation update(Long id, Firestation firestation) {
+<b class="fc">&nbsp;        JSONArray firestationArray = (JSONArray) firestationRecordJSON.get(&quot;firestations&quot;);</b>
+<b class="fc">&nbsp;        JSONObject recordObj = (JSONObject) firestationArray.get(Math.toIntExact(id));</b>
+<b class="fc">&nbsp;        Firestation newFirestation = new Firestation(</b>
+<b class="fc">&nbsp;                firestation.getAddress(),</b>
+<b class="fc">&nbsp;                firestation.getStation()</b>
+&nbsp;        );
+<b class="fc">&nbsp;        logger.info(&quot;Firestation updated successfully&quot;);</b>
+<b class="fc">&nbsp;        save(firestation);</b>
+<b class="fc">&nbsp;        return newFirestation;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-09-15 10:40</div>
+</div>
+</body>
+</html>
