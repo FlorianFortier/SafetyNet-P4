@@ -105,7 +105,7 @@ public class PersonController {
      */
     @PostMapping("/Person")
     @ResponseBody
-    public ResponseEntity<Person> postMedicalRecord(@RequestBody Person person) {
+    public ResponseEntity<Person> postPerson(@RequestBody Person person) {
         Optional<Person> personRecordOptional = personService.postPersonRecord(person);
         return personRecordOptional.map(personRecordToPost
                 -> new ResponseEntity<>(person, HttpStatus.OK)).orElseGet(()
